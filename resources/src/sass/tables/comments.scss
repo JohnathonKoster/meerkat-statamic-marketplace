@@ -1,0 +1,139 @@
+.meerkat-table-wrapper {
+  .panel {
+    box-shadow: none;
+    margin-bottom: 0;
+    border-radius: 0;
+  }
+
+  .panel-footer {
+    background: transparent;
+    padding: 5px;
+    border-top: 1px solid #ddd;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+table.meerkat-comments-table {
+
+  .markdown-fieldtype {
+    margin-bottom: 10px;
+    background: white;
+  }
+
+  .column-actions {
+    text-align: initial;
+    width: initial;
+    font-weight: 100;
+  }
+
+  .comment-header-options {
+    float: right;
+    display: inline-block;
+  }
+
+  td {
+    vertical-align: top;
+
+    &.cell-datestamp {
+      max-width: 200px;
+    }
+
+    &.cell-name {
+      max-width: 300px;
+      width: 300px;
+      word-break: break-all;
+    }
+
+    &.cell-context {
+      max-width: 300px;
+      word-wrap: break-word;
+    }
+  }
+
+  [data-meerkat-comment="response"] {
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  tr {
+
+    &:not(:last-child) {
+      border-top: 1px solid #e0e0e0 !important;
+      border-bottom: none !important;
+    }
+
+    &[data-meerkat-comment-published="false"] {
+      border-left: $status-border-width solid $pending-border-color;
+    }
+
+    &[data-meerkat-comment-spam="true"] {
+      border-left: $status-border-width solid $spam-border-color;
+    }
+
+    &[data-meerkat-type="comment"] {
+      font-weight: 100;
+      a {
+        font-size: 14px;
+      }
+
+      [data-meerkat-has="actions"] {
+        opacity: 0;
+        transition: opacity 0.2s linear;
+      }
+
+      &:hover {
+        [data-meerkat-has="actions"] {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+@mixin responsive() {
+  table.meerkat-comments-table {
+    .comment-header-options {
+      float: left;
+    }
+    td.cell-name {
+      float: left;
+      display: inline-block;
+    }
+    td.cell-comment {
+      float: left;
+      display: inline-block;
+    }
+  }
+
+  table.meerkat-comments-table {
+    tr {
+      &[data-meerkat-type="comment"] {
+        [data-meerkat-has="actions"] {
+          opacity: 1 !important;
+        }
+      }
+    }
+  }
+
+
+  [data-meerkat-publisher="tab-navigation"] {
+    margin-top: 10px;
+  }
+
+  .meerkat-pagination-wrapper {
+    border-top: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  @include responsive;
+}
+
+@media (max-width: 767px) {
+  @include responsive;
+}
+
+.meerkat-mobile-table {
+  margin-top: 20px;
+}

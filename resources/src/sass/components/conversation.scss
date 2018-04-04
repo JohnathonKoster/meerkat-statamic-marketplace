@@ -1,0 +1,109 @@
+[data-meerkat-conversation-view="backdrop"] {
+    z-index: 9997;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-meerkat-conversation-view="conversation"] {
+    border-radius: 3px;
+    background: white;
+    z-index: 9998;
+    margin-top: 40px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-y: scroll;
+    padding-left: 0px;
+    padding-right: 0px;
+    max-height: 80%;
+    
+}
+
+.meerkat-conversation-body {
+    overflow-y: scroll;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.meerkat-overflow-hidden {
+    overflow: hidden !important;
+}
+
+.meerkat-conversation-header {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.23);
+    display: inline-block;
+    width: 100%;
+    span {
+        margin-top: 15px;
+        margin-right: 10px;
+    }
+    h3 {
+        padding-left: 5px;
+        padding-right: 5px;
+        float: left;
+    }
+    .meerkat-bulk-action-wrapper {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .meerkat-pagination-wrapper {
+        border-top: none;
+    }
+}
+
+.meerkat-conversation-intended-comment {
+    -webkit-box-shadow: 2px 2px 44px -12px rgba(41,128,185,1);
+    -moz-box-shadow: 2px 2px 44px -12px rgba(41,128,185,1);
+    box-shadow: 2px 2px 44px -12px rgba(41,128,185,1);
+}
+
+
+@mixin responsive() {
+    [data-meerkat-conversation-view="conversation"] {
+        position: fixed;
+        margin-top: 0px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-height: 96%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+}
+
+@media (max-width: 767px) {
+  [data-meerkat-conversation-view="conversation"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border: 0;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    margin-top: 0 !important;
+  }
+  .meerkat-conversation-header {
+    position: initial !important;
+    top: 0;
+    left: 0;
+    height: 50px;
+    right: 0;
+    background: #fff;
+    z-index: 9999;
+  }
+  .meerkat-conversation-body {
+    position: relative;
+    margin-top: 0px;
+    overflow-y: scroll;
+    height: 100%;
+  }
+  [data-meerkat-conversation-view="backdrop"] {
+      background-color: #ffffff !important;
+  }
+}

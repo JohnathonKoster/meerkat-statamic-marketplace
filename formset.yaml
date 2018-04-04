@@ -1,0 +1,15 @@
+title: Comment Submission
+fields:
+  name:
+    display: Name
+    validate: required
+  comment:
+    display: Comment
+    validate: required|min:5
+  email:
+    display: Email
+    validate: required|email
+columns:
+  - name
+  - email
+  - comment

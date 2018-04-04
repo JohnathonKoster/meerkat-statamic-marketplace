@@ -1,0 +1,66 @@
+
+@mixin avatarInitial($letter, $background, $color) {
+  &.meerkat-avatar-initial-#{$letter} {
+    background-color: $background;
+
+    .initials {
+      color: $color;
+    }
+  }
+}
+
+.meerkat-avatar-initials {
+  width: 64px !important;
+  height: 64px !important;
+  display: inline-block;
+  text-align: center;
+  float: left;
+  margin-right: 10px;
+
+  .initials {
+    position: relative;
+    text-align: center;
+    font-size: 35px;
+    line-height: 64px;
+    color: #fff;
+    font-weight: bold;
+  }
+  @include avatarInitial('a', #1abc9c, #ecf0f1);
+  @include avatarInitial('b', #f1c40f, #ecf0f1);
+  @include avatarInitial('c', #16a085, #ecf0f1);
+  @include avatarInitial('d', #e74c3c, #ecf0f1);
+  @include avatarInitial('e', #2980b9, #ecf0f1);
+
+  @include avatarInitial('f', #2c3e50, #ecf0f1);
+  @include avatarInitial('g', #ecf0f1, #2c3e50);
+  @include avatarInitial('h', #e67e22, #ecf0f1);
+  @include avatarInitial('i', #e74c3c, #ecf0f1);
+  @include avatarInitial('j', #27ae60, #ecf0f1);
+  @include avatarInitial('k', #e67e22, #ecf0f1);
+  @include avatarInitial('l', #9b59b6, #ecf0f1);
+  @include avatarInitial('m', #16a085, #ecf0f1);
+  @include avatarInitial('n', #8e44ad, #ecf0f1);
+  @include avatarInitial('o', #e74c3c, #ecf0f1);
+  @include avatarInitial('p', #f39c12, #ecf0f1);
+  @include avatarInitial('q', #e74c3c, #ecf0f1);
+  @include avatarInitial('r', #2ecc71, #ecf0f1);
+  @include avatarInitial('s', #3498db, #ecf0f1);
+  @include avatarInitial('t', #34495e, #ecf0f1);
+  @include avatarInitial('u', #2c3e50, #ecf0f1);
+  @include avatarInitial('v', #16a085, #ecf0f1);
+  @include avatarInitial('w', #9b59b6, #ecf0f1);
+  @include avatarInitial('x', #3498db, #ecf0f1);
+  @include avatarInitial('y', #e74c3c, #ecf0f1);
+  @include avatarInitial('z', #e67e22, #ecf0f1);
+  @include avatarInitial('0', #27ae60, #ecf0f1);
+  @include avatarInitial('1', #2c3e50, #ecf0f1);
+  @include avatarInitial('2', #e67e22, #ecf0f1);
+  @include avatarInitial('3', #2980b9, #ecf0f1);
+  @include avatarInitial('4', #8e44ad, #ecf0f1);
+  @include avatarInitial('5', #c0392b, #ecf0f1);
+  @include avatarInitial('6', #34495e, #ecf0f1);
+  @include avatarInitial('7', #e67e22, #ecf0f1);
+  @include avatarInitial('8', #95a5a6, #34495e);
+  @include avatarInitial('9', #d35400, #ecf0f1);
+
+}

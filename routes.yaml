@@ -1,0 +1,33 @@
+routes:
+  /: index
+  comments/{context}: getComments
+  post@postSocialize:
+    uses: postSocialize
+    as: comments.create
+  delete@delete:
+    uses: deleteComments
+    as: comments.delete
+  post@spam:
+    uses: markCommentsAsSpam
+    as: comments.spam
+  post@notspam:
+    uses: markCommentsAsNotSpam
+    as: comments.notspam
+  post@approve:
+    uses: approveComments
+    as: comments.approve
+  post@unapprove:
+    uses: unApproveComments
+    as: comments.unapprove
+  post@update:
+    uses: updateComment
+    as: comments.update
+  post@checkspam:
+    uses: postCheckForSpam
+    as: comments.checkspam
+  get@export:
+    uses: getExport 
+    as: comments.export
+  get@counts:
+    uses: getCounts
+    as: comments.counts

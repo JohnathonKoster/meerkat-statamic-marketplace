@@ -1,0 +1,45 @@
+fields:
+  license:
+    type: section
+    width: 100
+  license_key:
+    type: text
+    width: 100
+  publishing:
+    type: section
+    width: 100
+  auto_publish:
+    type: toggle
+    width: 50
+  auto_publish_authenticated_users:
+    type: toggle
+    width: 50
+  cp_avatar_driver:
+    type: select
+    width: 50
+    options:
+      gravatar: Gravatar
+      initials: Initials
+  automatically_close_comments:
+    type: text
+    width: 50
+    validate: integer
+    default: "0"
+  security:
+    type: section
+    width: 100
+  auto_check_spam:
+    type: toggle
+    width: 50
+  auto_delete_spam:
+    type: toggle
+    width: 50
+  auto_submit_results:
+    type: toggle
+    width: 100
+  akismet_api_key:
+    type: text
+    width: 50
+  akismet_front_page:
+    type: text
+    width: 50

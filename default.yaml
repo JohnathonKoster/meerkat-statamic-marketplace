@@ -1,0 +1,24 @@
+auto_publish: false
+auto_publish_authenticated_users: true
+cp_avatar_driver: gravatar
+automatically_close_comments: "0"
+auto_check_spam: true
+auto_delete_spam: false
+auto_submit_results: false
+akismet_api_key:
+akismet_front_page:
+form_user_fields:
+  name: first_name
+  email: email
+akismet_fields:
+  author: name
+  email: email
+  user_ip: user_ip
+  user_agent: user_agent
+  referrer: referrer
+  permalink: page_url
+  content: comment
+iplist:
+  allow:
+    - 127.0.0.1
+  block: ""

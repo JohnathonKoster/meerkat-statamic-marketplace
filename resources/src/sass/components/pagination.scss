@@ -1,0 +1,46 @@
+.meerkat-paginate {
+    > li {
+      display: inline;
+    }
+    .btn-link {
+      color: black;
+      font-weight: 100;
+      &.active {
+        font-weight: 400;
+        border-bottom: 1px solid black;
+      }
+    }
+}
+
+.meerkat-pagination {
+  li {
+    display: inline;
+  }
+}
+
+.meerkat-pagination-wrapper {
+  text-align: center;
+  width: 100%;
+  border-top: 1px solid #e0e0e0;
+  .pagination {
+    width: initial !important;
+  }
+  .meerkat-paginatiion {
+    width: initial !important;
+    border-top: none !important;
+  }
+}
+
+@mixin responsive-pagination() {
+  .meerkat-pagination-wrapper {
+    border-top: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  @include responsive-pagination;
+}
+
+@media (max-width: 767px) {
+  @include responsive-pagination;
+}
