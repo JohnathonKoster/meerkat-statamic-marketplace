@@ -11,13 +11,6 @@ class CommentManager
     use Extensible;
 
     /**
-     * The name of the addon.
-     *
-     * @var string
-     */
-    protected $addon_name = 'Meerkat';
-
-    /**
      * The Manager instance.
      *
      * @var Manager
@@ -33,6 +26,7 @@ class CommentManager
 
     public function __construct(Manager $streamManager, Guard $guard)
     {
+        $this->addon_name = 'Meerkat';
         $this->streamManager = $streamManager;
         $this->guard = $guard;
     }

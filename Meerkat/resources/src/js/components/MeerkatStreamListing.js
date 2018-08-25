@@ -633,10 +633,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
             swal({
                 type: 'warning',
-                title: translate('cp.are_you_sure'),
+                title: translate('addons.Meerkat::actions.prompt_confirm'),
                 text: translate_choice('addons.Meerkat::actions.confirm_delete_comment', 1),
-                confirmButtonText: translate('cp.yes_im_sure'),
-                cancelButtonText: translate('cp.cancel'),
+                confirmButtonText: translate('addons.Meerkat::actions.prompt_confirm_action'),
+                cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
                 self.$http.delete(self.ajax.delete, {ids: [id]}, function (data) {
@@ -662,10 +662,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
             swal({
                 type: 'warning',
-                title: translate('cp.are_you_sure'),
+                title: translate('addons.Meerkat::actions.prompt_confirm'),
                 text: translate_choice('addons.Meerkat::actions.confirm_delete_comment', 2),
-                confirmButtonText: translate('cp.yes_im_sure'),
-                cancelButtonText: translate('cp.cancel'),
+                confirmButtonText: translate('addons.Meerkat::actions.prompt_confirm_action'),
+                cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
                 self.applyingBulkActions = true;
@@ -809,10 +809,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
             swal({
                 type: 'warning',
-                title: translate('cp.are_you_sure'),
+                title: translate('addons.Meerkat::actions.prompt_confirm'),
                 text: translate_choice('addons.Meerkat::actions.confirm_mark_as_spam', 1),
-                confirmButtonText: translate('cp.yes_im_sure'),
-                cancelButtonText: translate('cp.cancel'),
+                confirmButtonText: translate('addons.Meerkat::actions.prompt_confirm_action'),
+                cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
                 self.$http.post(self.ajax.spam, {ids: [id]}, function (data) {
@@ -844,10 +844,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
             swal({
                 type: 'warning',
-                title: translate('cp.are_you_sure'),
+                title: translate('addons.Meerkat::actions.prompt_confirm'),
                 text: translate_choice('addons.Meerkat::actions.confirm_mark_as_spam', 1),
-                confirmButtonText: translate('cp.yes_im_sure'),
-                cancelButtonText: translate('cp.cancel'),
+                confirmButtonText: translate('addons.Meerkat::actions.prompt_confirm_action'),
+                cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
                 self.applyingBulkActions = true;
@@ -884,10 +884,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
             swal({
                 type: 'warning',
-                title: translate('cp.are_you_sure'),
+                title: translate('addons.Meerkat::actions.prompt_confirm'),
                 text: translate_choice('addons.Meerkat::actions.confirm_mark_as_not_spam', 1),
-                confirmButtonText: translate('cp.yes_im_sure'),
-                cancelButtonText: translate('cp.cancel'),
+                confirmButtonText: translate('addons.Meerkat::actions.prompt_confirm_action'),
+                cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
                 self.$http.post(self.ajax.notspam, {ids: [id]}, function (data) {
@@ -919,10 +919,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
             swal({
                 type: 'warning',
-                title: translate('cp.are_you_sure'),
+                title: translate('addons.Meerkat::actions.prompt_confirm'),
                 text: translate_choice('addons.Meerkat::actions.confirm_mark_as_not_spam', 1),
-                confirmButtonText: translate('cp.yes_im_sure'),
-                cancelButtonText: translate('cp.cancel'),
+                confirmButtonText: translate('addons.Meerkat::actions.prompt_confirm_action'),
+                cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
                 self.applyingBulkActions = true;

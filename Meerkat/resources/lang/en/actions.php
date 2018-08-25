@@ -55,6 +55,11 @@ return [
 
     // Misc
     'loading' => 'Loading...',
+    'configure' => 'Configure',
+    'cancel' => 'Cancel',
+    'prompt_confirm' => 'Are you sure?',
+    'prompt_confirm_action' => 'Yes, I\'m sure',
+
 
     // Export
     'export' => 'Export',

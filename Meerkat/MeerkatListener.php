@@ -100,7 +100,9 @@ class MeerkatListener extends Listener
         if (version_compare(STATAMIC_VERSION, '2.1.0') >= 0) {
             $comments = Nav::item(meerkat_trans('comments.comments'))->url('/' . CP_ROUTE . '/addons/meerkat?source=cp-nav')->icon('chat');
 
-            if ($pendingCount > 0) {
+            $badgeMethodExists = method_exists($comments, 'badge');
+
+            if ($badgeMethodExists && $pendingCount > 0) {
                 $comments->badge($pendingCount);
             }
         } else {

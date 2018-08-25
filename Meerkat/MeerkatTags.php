@@ -8,6 +8,7 @@ use Statamic\API\Parse;
 use Statamic\API\Crypt;
 use Statamic\Data\DataCollection;
 use Statamic\Addons\Meerkat\UI\Gravatar;
+use Statamic\Addons\Meerkat\SettingsPatcher;
 use Statamic\Addons\Meerkat\Comments\Stream;
 use Statamic\Addons\Meerkat\Comments\Manager;
 use Statamic\Addons\Collection\CollectionTags;
@@ -35,6 +36,14 @@ class MeerkatTags extends CollectionTags
      * @var CommentCollection
      */
     protected $collection;
+
+    public function __construct($properties = [])
+    {
+        parent::__construct($properties);
+
+        SettingsPatcher::loadMeerkatHelpers();
+        SettingsPatcher::ensurePathsExist();
+    }
 
     /**
      * The {{ meerkat }} tag

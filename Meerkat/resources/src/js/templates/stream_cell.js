@@ -22,7 +22,7 @@ Meerkat.setMeerkatCellTemplate(`
         </div>
         <ul class="list-inline" data-meerkat-has="actions">
         <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('saveItemEdits', item.id)"><span class="icon icon-check"></span> {{ translate('addons.Meerkat::actions.save') }}</a></li>
-        <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelItemEdit', item.id)">{{ translate('cp.cancel') }}</a></li>
+        <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelItemEdit', item.id)">{{ translate('addons.Meerkat::actions.cancel') }}</a></li>
         <li v-if="item['saving'] === true"><span class="icon icon-circular-graph animation-spin"></span> {{ translate('addons.Meerkat::actions.saving') }}</li>
         </ul>
     </div>
@@ -32,7 +32,7 @@ Meerkat.setMeerkatCellTemplate(`
         </div>
         <ul class="list-inline" data-meerkat-has="actions">
         <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('createNewReply', item.id)"><span class="icon icon-reply"></span> {{ translate('addons.Meerkat::actions.reply') }}</a></li>
-        <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelPostReply', item.id)">{{ translate('cp.cancel') }}</a></li>
+        <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelPostReply', item.id)">{{ translate('addons.Meerkat::actions.cancel') }}</a></li>
         <li v-if="item['saving'] === true"><span class="icon icon-circular-graph animation-spin"></span> {{ translate('addons.Meerkat::actions.replying') }}</li>
         </ul>
     </div>
@@ -89,7 +89,7 @@ Meerkat.setMeerkatCellTemplate(`
                 </div>
                 <ul class="list-inline meerkat-mobile-edit-actions" data-meerkat-has="actions">
                 <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('saveItemEdits', item.id)"><span class="icon icon-check"></span> {{ translate('addons.Meerkat::actions.save') }}</a></li>
-                <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelItemEdit', item.id)">{{ translate('cp.cancel') }}</a></li>
+                <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelItemEdit', item.id)">{{ translate('addons.Meerkat::actions.cancel') }}</a></li>
                 <li v-if="item['saving'] === true"><span class="icon icon-circular-graph animation-spin"></span> {{ translate('addons.Meerkat::actions.saving') }}</li>
                 </ul>
             </div>
@@ -99,7 +99,7 @@ Meerkat.setMeerkatCellTemplate(`
                 </div>
                 <ul class="list-inline meerkat-mobile-edit-actions" data-meerkat-has="actions">
                 <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('createNewReply', item.id)"><span class="icon icon-reply"></span> {{ translate('addons.Meerkat::actions.reply') }}</a></li>
-                <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelPostReply', item.id)">{{ translate('cp.cancel') }}</a></li>
+                <li v-if="item['saving'] === false"><a href="#" @click.prevent="call('cancelPostReply', item.id)">{{ translate('addons.Meerkat::actions.cancel') }}</a></li>
                 <li v-if="item['saving'] === true"><span class="icon icon-circular-graph animation-spin"></span> {{ translate('addons.Meerkat::actions.replying') }}</li>
                 </ul>
             </div>

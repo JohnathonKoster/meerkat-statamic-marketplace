@@ -24,13 +24,13 @@
                 <h1 data-meerkat-ui="comments-header">{{ meerkat_trans('comments.comments') }}</h1>
 
                 @can('super')
-                    <a href="{{ route('form.edit', ['form' => 'Meerkat']) }}" class="btn">{{ t('configure') }}</a>
+                    <a href="{{ route('form.edit', ['form' => 'Meerkat']) }}" class="btn">{{ meerkat_trans('actions.configure') }}</a>
                 @endcan
 
                 <a href="#" @click.prevent="checkForSpam" class="btn"><span v-if="checkingSpam == true"><span class="icon icon-circular-graph animation-spin"></span></span> {{ meerkat_trans('actions.check_for_spam') }}</a>
 
                 <div class="btn-group">
-                    <a href="{{ route('comments.export', ['type' => 'csv']) }}&download=true" type="button" class="btn btn-default">{{ meerkat_trans('actions.export') }}</a>
+                    <a href="{{ route('comments.export', ['type' => 'csv']) }}&download=true"  class="btn btn-default">{{ meerkat_trans('actions.export') }}</a>
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>

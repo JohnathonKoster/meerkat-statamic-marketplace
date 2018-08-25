@@ -8,12 +8,10 @@ class AvatarLoader
 {
     use Extensible;
 
-    /**
-     * The addon name.
-     *
-     * @var string
-     */
-    protected $addon_name = 'Meerkat';
+    public function __construct()
+    {
+        $this->addon_name = 'Meerkat';
+    }
 
     /**
      * The Avatar driver names and their templates.

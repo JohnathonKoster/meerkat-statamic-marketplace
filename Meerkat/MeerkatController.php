@@ -3,6 +3,7 @@
 namespace Statamic\Addons\Meerkat;
 
 use Statamic\Addons\Meerkat\Comments\Metrics\CommentMetrics;
+use Statamic\API\Str;
 use Statamic\API\Data;
 use Statamic\API\Crypt;
 use Statamic\API\Helper;
@@ -53,6 +54,7 @@ class MeerkatController extends Controller
 
     public function __construct(Manager $streamManager)
     {
+        $this->addon_name = 'Meerkat';
         $this->streamManager = $streamManager;
         $this->protectRoutes();
     }
@@ -64,14 +66,6 @@ class MeerkatController extends Controller
      */
     public function index()
     {
-        if (!$this->isLicensed()) {
-            return $this->view('license', [
-                'title' => meerkat_trans('settings.license'),
-                'license_key' => $this->getConfig('license_key'),
-                'submit' => $this->actionUrl('updatelicense')
-            ]);
-        }
-
         return $this->view('streams.index', [
             'title' => meerkat_trans('comments.comments'),
             'form' => MeerkatAPI::getForm(),
@@ -487,7 +481,31 @@ class MeerkatController extends Controller
             $error_redirect = back();
         }
 
+        $jumpSuffix = $this->getJumpSuffix();
+
+        $currentTargetUrl = $error_redirect->getTargetUrl().$jumpSuffix;
+        $error_redirect->setTargetUrl($currentTargetUrl);
+
         return $error_redirect->withInput()->withErrors($errors, 'form.' . $formset);
+    }
+
+    private function getJumpSuffix($id = null)
+    {
+        $jumpValue = '#comments';
+
+        if (request()->has('meerkat_jump')) {
+            $jumpValue = request('meerkat_jump');
+
+            if (Str::startsWith($jumpValue, 'to:')) {
+                $jumpValue = Str::substr($jumpValue, 3);
+            } else if (Str::startsWith($jumpValue, 'comment:id') && $id != null) {
+                $jumpValue = '#comment-'.$id;
+            } else if (Str::startsWith($jumpValue, 'comment:id|') && $id == null) {
+                $jumpValue = Str::substr($jumpValue, 11);
+            }
+        }
+
+        return $jumpValue;
     }
 
     /**
@@ -511,6 +529,11 @@ class MeerkatController extends Controller
         $redirect = array_get($params, 'redirect');
 
         $response = ($redirect) ? redirect($redirect) : back();
+        
+        $jumpSuffix = $this->getJumpSuffix($submission->id());
+
+        $currentTargetUrl = $response->getTargetUrl().$jumpSuffix;
+        $response->setTargetUrl($currentTargetUrl);
 
         $this->flash->put('success', true);
         $this->flash->put('submission', $submission);

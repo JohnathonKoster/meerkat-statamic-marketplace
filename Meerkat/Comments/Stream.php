@@ -79,13 +79,6 @@ class Stream implements Countable
     protected $disk;
 
     /**
-     * The addon name.
-     *
-     * @var string
-     */
-    protected $addon_name = 'Meerkat';
-
-    /**
      * The context object cache.
      *
      * @var Collection
@@ -115,6 +108,7 @@ class Stream implements Countable
 
     public function __construct($context = null)
     {
+        $this->addon_name = 'Meerkat';
         $this->disk = File::disk('content');
         $this->contextCache = collect();
 
@@ -261,6 +255,10 @@ class Stream implements Countable
             if (is_array($modifiedData)) {
                 $data = array_merge($data, $modifiedData);
             }
+        }
+
+        if (!isset($data['spam'])) {
+            $data['spam'] = false;
         }
 
         if ($data['spam'] === true && $data['spam_auto_delete'] === true) {

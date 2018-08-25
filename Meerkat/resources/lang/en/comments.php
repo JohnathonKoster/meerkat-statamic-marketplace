@@ -5,6 +5,9 @@ return [
     'comments' => 'Comments',
     'content' => 'Content',
     
+    'table_author' => 'Author',
+    'table_comment' => 'Comment',
+
     'comments_c' => 'Comment|Comments',
     'comments_possessive' => 'Your comments',
     'comments_approved_possessive' => 'Your approved comments',

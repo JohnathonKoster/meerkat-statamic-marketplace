@@ -1,10 +1,17 @@
 <?php
 
 use Statamic\API\URL;
+use Statamic\API\Config;
 
 if (!function_exists('meerkat_cppath')) {
     function meerkat_cppath() {
         return URL::assemble(SITE_ROOT, str_finish(CP_ROUTE, '/'));
+    }
+}
+
+if (!function_exists('meerkat_get_config')) {
+    function meerkat_get_config($configurationItem, $default = null) {
+        return Config::get($configurationItem, $default);
     }
 }
 

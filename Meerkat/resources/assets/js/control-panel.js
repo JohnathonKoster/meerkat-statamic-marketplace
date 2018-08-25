@@ -1,1 +1,36 @@
-!function(){$(document).ready(function(){var a=$('a[href$="meerkat?source=cp-nav"]');window.meerkatAutoUpdateInterval=window.setInterval(function(){$.get(window.Meerkat.countsUrl,function(t){if("object"==typeof t){if(t.counts.pending>0)if(a.find(".badge").length>0)a.find(".badge").text(t.counts.pending);else{var e=$('<span class="badge bg-red">'+t.counts.pending+"</span>");a.append(e)}$('[data-meerkat-stats="all"]').text(t.counts.all),$('[data-meerkat-stats="pending"]').text(t.counts.pending),$('[data-meerkat-stats="approved"]').text(t.counts.approved),$('[data-meerkat-stats="spam"]').text(t.counts.spam),"undefined"!=typeof window.meerkatDashboard&&(window.meerkatDashboard.data.datasets[0].data[0]=t.counts.spam,window.meerkatDashboard.data.datasets[0].data[1]=t.counts.pending,window.meerkatDashboard.data.datasets[0].data[2]=t.counts.approved)}})},3e4)})}();
+(function () {
+
+    $(document).ready(function () {
+        var cpNav = $('a[href$="meerkat?source=cp-nav"]');
+        window.meerkatAutoUpdateInterval = window.setInterval(function () {
+            $.get(window.Meerkat.countsUrl, function (data) {
+               if (typeof data !== 'object') {
+                   return;
+               }
+
+               if (data.counts.pending > 0) {
+                   if (cpNav.find('.badge').length > 0) {
+                       cpNav.find('.badge').text(data.counts.pending);
+                   } else {
+                       var badge = $('<span class="badge bg-red">' + data.counts.pending + '</span>');
+                       cpNav.append(badge);
+                   }
+               }
+
+                $('[data-meerkat-stats="all"]').text(data.counts.all);
+                $('[data-meerkat-stats="pending"]').text(data.counts.pending);
+                $('[data-meerkat-stats="approved"]').text(data.counts.approved);
+                $('[data-meerkat-stats="spam"]').text(data.counts.spam);
+
+                if (typeof window.meerkatDashboard !== 'undefined') {
+                    window.meerkatDashboard.data.datasets[0].data[0] = data.counts.spam;
+                    window.meerkatDashboard.data.datasets[0].data[1] = data.counts.pending;
+                    window.meerkatDashboard.data.datasets[0].data[2] = data.counts.approved;
+                }
+
+            });
+        }, 30000); //30000);
+    });
+
+})();
+//# sourceMappingURL=control-panel.js.map

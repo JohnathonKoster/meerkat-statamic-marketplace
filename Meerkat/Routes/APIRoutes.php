@@ -149,16 +149,18 @@ trait APIRoutes
      */
     public function getApiComments(Manager $manager)
     {
+        $currentLocale = meerkat_get_config('cp.locale', 'en');
+
         $columns = [
             [
                 'label' => 'name',
                 'field' => 'name',
-                'translation' => 'Author'
+                'translation' => meerkat_trans('comments.table_author', [], 'messages', $currentLocale)
             ],
             [
                 'label' => 'comment',
                 'field' => 'comment',
-                'translation' => 'Comment'
+                'translation' => meerkat_trans('comments.table_comment', [], 'messages', $currentLocale)
             ]
         ];
 

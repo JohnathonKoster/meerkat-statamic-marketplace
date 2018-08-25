@@ -33,6 +33,8 @@ class Factory
             $data['url'] = false;
         }
 
+        $currentLocale = meerkat_get_config('cp.locale', 'en');
+
         $data['user_ip'] = $comment->get('ip');
         $data['published'] = $comment->published();
         $data['spam'] = $comment->isSpam();
@@ -45,7 +47,7 @@ class Factory
         $data['in_response_string'] = meerkat_trans('comments.in_response_to', [
             'article' => '<a href="' . $data['in_response_to_edit_url'] . '" title="' . $data['in_response_to'] . '">' . Str::limit($data['in_response_to'], 55) . '</a>',
             'date' => $data['datestring']
-        ]);
+        ], 'messages', $currentLocale);
 
         $data['is_reply'] = $comment->isReply();
         $data['has_replies'] = $comment->hasReplies();
@@ -55,8 +57,8 @@ class Factory
 
         if ($comment->isReply()) {
             $data['in_reply_to_string'] = meerkat_trans('comments.in_reply_to', [
-                'author' => '<a href="#meerkat-comment-' . $comment->getParentID() . '" title="' . meerkat_trans('actions.jump_to_author_post') . '">' . $comment->getParent()->get('name') . '</a>'
-            ]);
+                'author' => '<a href="#meerkat-comment-' . $comment->getParentID() . '" title="' . meerkat_trans('actions.jump_to_author_post', [], 'messages', $currentLocale) . '">' . $comment->getParent()->get('name') . '</a>'
+            ], 'messages', $currentLocale);
             $data['parent_comment_name'] = $comment->getParent()->get('name');
         } else {
             $data['in_reply_to_string'] = null;

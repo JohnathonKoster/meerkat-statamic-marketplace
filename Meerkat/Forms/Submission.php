@@ -13,7 +13,6 @@ use Statamic\Forms\Submission as StatamicSubmission;
 class Submission extends StatamicSubmission implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
 
-
     /**
      * The ID of the submission.
      *
@@ -27,6 +26,13 @@ class Submission extends StatamicSubmission implements ArrayAccess, Arrayable, J
      * @var array
      */
     protected $originalData = [];
+
+    /**
+     * The supplement data.
+     *
+     * @var array
+     */
+    protected $supplements = [];
 
     /**
      * List any attributes that you want to track the dirty state of here.
@@ -109,13 +115,18 @@ class Submission extends StatamicSubmission implements ArrayAccess, Arrayable, J
      * @param null $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get($key)
     {
         if (array_key_exists($key, $this->originalData)) {
             return $this->originalData[$key];
         }
 
-        return value($default);
+        return null;
+    }
+
+    public function getSupplement($key, $default = null)
+    {
+        return array_get($this->supplements, $key, $default);
     }
 
     /**

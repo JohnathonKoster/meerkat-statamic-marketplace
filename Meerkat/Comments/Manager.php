@@ -10,12 +10,10 @@ class Manager
 {
     use Extensible;
 
-    /**
-     * The name of the addon.
-     *
-     * @var string
-     */
-    protected $addon_name = 'Meerkat';
+    public function __construct()
+    {
+        $this->addon_name = 'Meerkat';
+    }
 
     /**
      * Gets a Stream instance for a given context.

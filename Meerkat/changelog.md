@@ -1,3 +1,35 @@
+1.5.0
+
+Improvements
+- Added the following translation strings:
+    actions.configure
+    actions.cancel
+    actions.prompt_confirm
+    actions.prompt_confirm_action
+    comments.table_author
+    comments.table_comment
+    exports.name
+    exports.comment
+    exports.email
+    exports.date
+- Fixed a visual glitch with the "Exporter" button in the Control Panel
+- The comment table headers can now be translated
+- The CSV export headers can now be translated
+
+Fix
+- Items from the Comments API are now apply the correct language translation
+
+
+1.4.0
+
+Improvements
+- Removed the requirement of Composer dependencies to improve the installation experience across Statamic 2.x versions
+- Improved the internal settings management components
+
+Fix
+- Fixed an issue with the dashboard widget's JavaScript causing JavaScript errors on non-dashboard pages
+- Improved Statamic version 2.x compatibility
+
 1.3.26
 
 Improvements

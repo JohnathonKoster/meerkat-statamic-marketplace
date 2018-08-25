@@ -10,13 +10,6 @@ class IPListDetector implements SpamDetector
     use Extensible;
 
     /**
-     * The addon name.
-     *
-     * @var string
-     */
-    protected $addon_name = 'Meerkat';
-
-    /**
      * The IP addresses that should always be allowed.
      *
      * @var array
@@ -32,6 +25,8 @@ class IPListDetector implements SpamDetector
 
     public function __construct()
     {
+        $this->addon_name = 'Meerkat';
+
         $list = $this->getConfig('iplist', []);
 
         if (array_key_exists('allow', $list)) {

@@ -16,6 +16,8 @@ class CsvExporter extends AbstractExporter
 
     protected $headers = [];
 
+    protected $formHeaders = [];
+
     /**
      *
      */
@@ -26,13 +28,21 @@ class CsvExporter extends AbstractExporter
 
     private function insertHeaders()
     {
+        $currentLocale = meerkat_get_config('cp.locale', 'en');
         $headers = array_keys($this->form()->fields());
 
         $headers[] = 'date';
 
         $this->headers = $headers;
+        $this->formHeaders = $headers;
 
-        $this->writer->insertOne($headers);
+        $translatedHeaders = [];
+
+        foreach ($headers as $k => $v) {
+            $translatedHeaders[] = meerkat_trans('exports.'.$v, [], 'messages', $currentLocale);
+        }
+
+        $this->writer->insertOne($translatedHeaders);
     }
 
     public function insertData()
@@ -44,7 +54,7 @@ class CsvExporter extends AbstractExporter
             $data = [];
             
             collect($submission)->each(function ($value, $key) use (&$data) {
-                if (in_array($key, $this->headers)) {
+                if (in_array($key, $this->formHeaders)) {
                     $data[$key] = $value;
                 }
             });

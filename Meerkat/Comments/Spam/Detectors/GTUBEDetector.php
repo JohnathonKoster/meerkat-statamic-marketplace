@@ -34,7 +34,6 @@ class GTUBEDetector implements SpamDetector
             }
         }
 
-
         return false;
     }
 

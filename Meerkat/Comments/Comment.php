@@ -16,8 +16,6 @@ class Comment extends Submission
 {
     use HasRecursiveCommentKey, Extensible;
 
-    protected $addon_name = 'Meerkat';
-
     /**
      * The parent Comment instance, if any.
      *
@@ -69,6 +67,8 @@ class Comment extends Submission
 
     public function __construct()
     {
+        $this->addon_name = 'Meerkat';
+
         $this->disk = File::disk('content');
     }
 

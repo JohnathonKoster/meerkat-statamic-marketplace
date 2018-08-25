@@ -2,13 +2,12 @@
 
 namespace Statamic\Addons\Meerkat\Http\Composers;
 
-use Statamic\API\URL;
 use Illuminate\Support\Str;
 use Statamic\Extend\Extensible;
 use Illuminate\Contracts\View\View;
+use Statamic\Addons\Meerkat\API\URL;
 use Statamic\Addons\Meerkat\MeerkatAPI;
 use Statamic\Addons\Meerkat\Extend\AvatarLoader;
-use Statamic\Addons\Meerkat\Core\Compass\Compass;
 
 class JavaScriptComposer
 {
@@ -17,19 +16,9 @@ class JavaScriptComposer
     const LIST_START = '{{-- start:list --}}';
     const LIST_END   = '{{-- end:list --}}';
 
-    /**
-     * The addon name.
-     *
-     * @var string
-     */
-    protected $addon_name = 'Meerkat';
-
-    private $compass;
-
-    public function __construct(Compass $compass)
+    public function __construct()
     {
-        $this->compass = $compass;
-        $this->compass->check();
+        $this->addon_name = 'Meerkat';
     }
 
     /**
@@ -41,15 +30,6 @@ class JavaScriptComposer
     {
         return json_encode([
            'avatar_driver' => $this->getConfig('cp_avatar_driver')
-        ]);
-    }
-
-    private function getLicense()
-    {
-        return json_encode([
-           'meerkat_license_public_domain' => $this->compass->isOnPublicDomain(),
-           'meerkat_license_valid' => $this->compass->isLicenseValid(),
-           'meerkat_license_on_correct_domain' => $this->compass->isOnCorrectDomain()
         ]);
     }
 
@@ -68,16 +48,15 @@ class JavaScriptComposer
             $scripts = $view['scripts'];
         }
 
-
-        $scripts .= '<script>if (typeof Meerkat == "undefined") { Meerkat = {}; }  Meerkat.license = ' . $this->getLicense() . '; Meerkat.countsUrl = "' . meerkat_cppath() . 'addons/meerkat/counts";</script>';
-        $scripts = $scripts.'<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/license.js?v=' . MeerkatAPI::version())) . '"></script>';
         $scripts = $scripts.'<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/control-panel.js?v=' . MeerkatAPI::version())) . '"></script>';
 
         if (is_cp_dashboard()) {
-             $scripts = '<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/dashboard.js?v=' . MeerkatAPI::version())) . '"></script>' . $scripts;
-             
-             $view->with('scripts', $scripts);
-             return;
+            $dashboardPatches = file_get_contents(realpath(__DIR__.'/../../resources/meerkatCommentStats.js'));
+
+            $scripts .= '<script type="text/javascript">'.$dashboardPatches.'</script><script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/dashboard.js?v=' . MeerkatAPI::version())) . '"></script>' . $scripts;
+            
+            $view->with('scripts', $scripts);
+            return;
         }
 
         if (!is_meerkat_request()) {
@@ -99,6 +78,9 @@ class JavaScriptComposer
         if (is_meerkat_publisher_request()) {
             $scripts .= '<script>Meerkat.Publisher.publisherStream = '.$this->getStreamTemplate().';</script>';
         }
+
+
+        $scripts .= '';
 
         $view->with('scripts', $scripts);
 

@@ -13,8 +13,6 @@ class AkismetDetector implements SpamDetector
 {
     use Extensible;
 
-    protected $addon_name = 'Meerkat';
-
     /**
      * The AkismetServiceImpl instance.
      *
@@ -32,6 +30,7 @@ class AkismetDetector implements SpamDetector
 
     public function __construct($apiKey, $frontPage)
     {
+        $this->addon_name = 'Meerkat';
         $this->akismet = new AkismetServiceImpl;
         $this->akismet->setApiClient(new ApiClientImpl($apiKey, $frontPage));
         $this->factory = new CommentBuilderImpl;
