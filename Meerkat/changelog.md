@@ -1,4 +1,8 @@
-1.5.0
+1.5.2
+Fix
+- Resolves an issue with missing files from the installation setup.
+- Fixes an issue for the latest Statamic 2.x versions.
+
 
 Improvements
 - Added the following translation strings:
