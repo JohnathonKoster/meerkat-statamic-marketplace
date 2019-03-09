@@ -7,7 +7,7 @@ use Illuminate\Routing\RouteCollection;
 
 trait ProtectsRoutes
 {
-    
+
     protected function protectRoutes()
     {
         /** @var RouteCollection $routes */

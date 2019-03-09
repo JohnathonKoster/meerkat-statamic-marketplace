@@ -48,6 +48,8 @@ class JavaScriptComposer
             $scripts = $view['scripts'];
         }
 
+        $scripts .= '<script>if (typeof Meerkat == "undefined") { Meerkat = {}; } ; Meerkat.countsUrl = "' . meerkat_cppath() . 'addons/meerkat/counts";</script>';
+        $scripts = $scripts.'<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/license.js?v=' . MeerkatAPI::version())) . '"></script>';
         $scripts = $scripts.'<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/control-panel.js?v=' . MeerkatAPI::version())) . '"></script>';
 
         if (is_cp_dashboard()) {

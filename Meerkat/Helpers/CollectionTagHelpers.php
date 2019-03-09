@@ -13,27 +13,27 @@ trait CollectionTagHelpers
     /**
      * @var bool
      */
-    private $paginated;
+    protected $paginated;
 
     /**
      * @var int
      */
-    private $limit;
+    protected $limit;
 
     /**
      * @var int
      */
-    private $offset;
+    protected $offset;
 
     /**
      * @var array
      */
-    private $pagination_data;
+    protected $pagination_data;
 
     /**
      * @var int|null
      */
-    private $total_results;
+    protected $total_results;
 
     protected function limit()
     {
