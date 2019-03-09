@@ -209,11 +209,11 @@ trait APIRoutes
                 break;
         }
 
-        $total = $statistics['all'];
-
         if ($filter !== 'all' && in_array($filter, $validFilters)) {
             $total = $items->count();
         }
+
+        $total = $statistics['all'];
 
         $perPage = null;
         $page = null;

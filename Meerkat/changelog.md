@@ -1,3 +1,10 @@
+1.5.3
+Fix
+- Resolves a JavaScript path issue
+
+Improvements
+- Improved and streamlined the Composer setup process
+
 1.5.2
 Fix
 - Resolves an issue with missing files from the installation setup.

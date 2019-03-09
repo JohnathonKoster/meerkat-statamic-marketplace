@@ -1,6 +1,5 @@
 {
   "name": "stillat/meerkat",
   "require": {
-    "openclassrooms/akismet": "~2"
   }
 }
