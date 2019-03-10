@@ -1,3 +1,7 @@
+1.5.4
+Improvements
+- Meerkat is now "Open Source"
+
 1.5.3
 Fix
 - Resolves a JavaScript path issue
