@@ -5,6 +5,7 @@ namespace Statamic\Addons\Meerkat\Comments;
 use Carbon\Carbon;
 use Statamic\API\File;
 use Statamic\Extend\Extensible;
+use Statamic\Addons\Meerkat\Comments\Metrics\CommentMetrics;
 
 class Manager
 {
@@ -105,9 +106,9 @@ class Manager
      */
     public function countPending()
     {
-        return $this->allComments()->sum(function (Comment $comment) {
-            return $comment->get('is_pending');
-        });
+        $counts = with(new CommentMetrics())->setComments($this->allComments(true));
+    
+        return $counts->pending();
     }
 
     /**

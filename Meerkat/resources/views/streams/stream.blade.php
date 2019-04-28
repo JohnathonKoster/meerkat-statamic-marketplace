@@ -24,7 +24,7 @@
                 <h1 data-meerkat-ui="comments-header">{{ meerkat_trans('comments.comments') }}</h1>
 
                 @can('super')
-                    <a href="{{ route('form.edit', ['form' => 'Meerkat']) }}" class="btn">{{ meerkat_trans('actions.configure') }}</a>
+                    <a href="{{ route('form.edit', ['form' => 'meerkat']) }}" class="btn">{{ meerkat_trans('actions.configure') }}</a>
                 @endcan
 
                 <a href="#" @click.prevent="checkForSpam" class="btn"><span v-if="checkingSpam == true"><span class="icon icon-circular-graph animation-spin"></span></span> {{ meerkat_trans('actions.check_for_spam') }}</a>

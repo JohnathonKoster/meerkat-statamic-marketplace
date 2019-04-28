@@ -489,6 +489,12 @@ class MeerkatController extends Controller
         return $error_redirect->withInput()->withErrors($errors, 'form.' . $formset);
     }
 
+    /**
+     * Returns a formatted anchor that can be embedded into HTML pages.
+     *
+     * @param  int $id
+     * @return string
+     */
     private function getJumpSuffix($id = null)
     {
         $jumpValue = '#comments';
@@ -543,7 +549,8 @@ class MeerkatController extends Controller
 
     public function getCounts(Manager $manager)
     {
-        $items = $manager->allComments();
+        $items = $manager->allComments(true);
+
         $counts = with(new CommentMetrics())->setComments($items)->toArray();
 
         return compact('counts');

@@ -1,6 +1,10 @@
 1.5.4
+Fix
+- Corrects the Meerkat form configuration URL ([GH #6](https://github.com/Stillat/meerkat-v1hub/issues/6))
+- Corrects the Comments API count ([GH #3](https://github.com/Stillat/meerkat-v1hub/issues/3))
+
 Improvements
-- Meerkat is now "Open Source"
+- Updates Meerkat for Statamic 2.11.12 compatbility ([GH #8](https://github.com/Stillat/meerkat-v1hub/issues/8))
 
 1.5.3
 Fix
