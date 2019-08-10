@@ -1,3 +1,7 @@
+1.5.5
+Fix
+- Updates Meerkat to be compatible with Statamic's session and event handlers (#10 https://github.com/Stillat/meerkat-v1hub/issues/10)
+
 1.5.4
 Fix
 - Corrects the Meerkat form configuration URL ([GH #6](https://github.com/Stillat/meerkat-v1hub/issues/6))

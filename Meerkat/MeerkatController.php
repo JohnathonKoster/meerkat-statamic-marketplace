@@ -22,6 +22,7 @@ use Statamic\Addons\Meerkat\Comments\Factory;
 use Statamic\Addons\Meerkat\Comments\Manager;
 use Statamic\Addons\Meerkat\Routes\APIRoutes;
 use Statamic\Addons\Meerkat\Comments\Comment;
+use Statamic\Extend\Contextual\ContextualFlash;
 use Statamic\Addons\Meerkat\Core\LicenseUpdater;
 use Statamic\Addons\Meerkat\Routes\ExportRoutes;
 use Statamic\Addons\Meerkat\Routes\ProtectsRoutes;
@@ -32,6 +33,7 @@ class MeerkatController extends Controller
     use Extensible, APIRoutes, ExportRoutes, ProtectsRoutes;
 
     protected $streamManager;
+    protected $formFlash;
 
     protected $protectedRoutes = [
         'index',
@@ -56,6 +58,7 @@ class MeerkatController extends Controller
     {
         $this->addon_name = 'Meerkat';
         $this->streamManager = $streamManager;
+        $this->formFlash = new ContextualFlash('Form');
         $this->protectRoutes();
     }
 
@@ -340,8 +343,8 @@ class MeerkatController extends Controller
 
         $response = ($redirect) ? redirect($redirect) : back();
 
-        $this->flash->put('success', true);
-        $this->flash->put('submission', $comment);
+        $this->formFlash->put('success', true);
+        $this->formFlash->put('submission', $comment);
 
         return $response;
     }
@@ -433,7 +436,6 @@ class MeerkatController extends Controller
         if (!$this->isAuthenticatedUser($fields['email']) &&
             !$this->streamManager->areCommentsEnabled($entry->date())) {
             $errors['*'] = $this->trans('comments.disabled');
-
             return $this->formFailure($params, $errors, MeerkatTags::MEERKAT_FORMSET);
         }
 
@@ -444,6 +446,7 @@ class MeerkatController extends Controller
 
         try {
             $submission->data($fields);
+
         } catch (PublishException $e) {
             $this->emitEvent('comment.attach.failed', $e);
             return $this->formFailure($params, $e->getErrors(), MeerkatTags::MEERKAT_FORMSET);
@@ -461,6 +464,7 @@ class MeerkatController extends Controller
         }
 
         $this->emitEvent('comment.attach.success', $submission);
+        event('Form.submission.created', $submission);
 
         return $this->formSuccess($params, $submission);
     }
@@ -541,8 +545,8 @@ class MeerkatController extends Controller
         $currentTargetUrl = $response->getTargetUrl().$jumpSuffix;
         $response->setTargetUrl($currentTargetUrl);
 
-        $this->flash->put('success', true);
-        $this->flash->put('submission', $submission);
+        $this->formFlash->put('form.meerkat.success', true);
+        $this->formFlash->put('submission', $submission);
 
         return $response;
     }
