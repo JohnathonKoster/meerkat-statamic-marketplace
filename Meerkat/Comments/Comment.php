@@ -2,6 +2,7 @@
 
 namespace Statamic\Addons\Meerkat\Comments;
 
+use Statamic\Addons\Meerkat\Markdown\Parser;
 use Statamic\API\File;
 use Statamic\API\User;
 use Statamic\API\YAML;
@@ -510,78 +511,18 @@ class Comment extends Submission
 
         $data = $this->originalData;
 
-        $contentValue = 'comment';
-        $originalMarkdown = '';
-        $originalValue = '';
+        $content = '';
         $updatingContentField = false;
-
 
         if ((isset($data['content']) ||  isset($data['comment'])) && $this->hasDirtyAttribute('comment')) {
             $updatingContentField = true;
             $this->watchedDirtyAttributes[] = 'comment';
         }
 
-        if (isset($data['content']) || isset($data['comment']))
-        {
-            if ($content = array_get($data, 'content')) {
-                if (array_key_exists('content_markdown', $this->sourceData)) {
-                    if (trim($content) != trim($this->sourceData['content_markdown'])) {
-                        $updatingContentField = true;
-                        $this->watchedDirtyAttributes[] = 'comment';
-                    }
-                }
-            } else if ($content = array_get($data, 'comment')) {
-                if (array_key_exists('content_markdown', $this->sourceData)) {
-                    if (trim($content) != trim($this->sourceData['content_markdown'])) {
-                        $updatingContentField = true;
-                        $this->watchedDirtyAttributes[] = 'comment';
-                    }
-                }
-            }
-        }
-
-        if ($content = array_get($data, 'content')) {
-            // Store the content value before we unset it.
-            $originalValue = $data['content'];
-            unset($data['content']);
-            $originalMarkdown = $data['content_markdown'];
-
-            // Remove the values that are just used internally.
-            unset($data['content_markdown']);
-            $contentValue = 'content';
-        }
-
         if (isset($data['comment'])) {
-            // This may have been reset.
-            if (array_key_exists('content_markdown', $data)) {
-                $originalMarkdown = $data['content_markdown'];
-                $originalValue = $data['comment'];
-                unset($data['comment']);
-                // Remove the values that are just used internally.
-                unset($data['comment_markdown']);
-            }
-
-            $contentValue = 'comment';
-        }
-
-        // Set the markdown value based on what key we are using
-        // to store the comment's value. Developer's really
-        // should use the `comment` form value, but hey,
-        // we might as well be nice and be flexible.
-        if ($contentValue == 'content' || $updatingContentField) {
-            if ($this->hasDirtyAttribute('comment')) {
-                // Updating the comment's content.
-                $content = $originalValue;
-            } else {
-                $content = $originalMarkdown;
-            }
+            $content = $data['comment'];
         } else {
-            if ($this->hasDirtyAttribute('comment')) {
-                // Updating the comment's content.
-                $data[$contentValue] = $originalValue;
-            } else {
-                $data[$contentValue] = $originalMarkdown;
-            }
+            $content = $this->sourceData['comment'];
         }
 
         // Unset the context, as it is not stored on the comment directly.
@@ -612,9 +553,9 @@ class Comment extends Submission
             unset($data['comment_markdown']);
         }
 
-        $data['comment'] = $originalValue;
+        $data['comment'] = $content;
 
-        $this->disk->put($filename, YAML::dump($data, $content));
+        $this->disk->put($filename, YAML::dump($data, null));
     }
 
     /**
