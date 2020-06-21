@@ -1,3 +1,16 @@
+1.5.62
+- Patches the Meerkat Statamic Control Panel translations with fallback values when appropriate
+- Improves locale detection in the API Comments response 
+
+1.5.61
+- Ensures that reply-to fields are an array to prevent errors
+
+1.5.6
+- Fixed a bug that prevented comments from displaying when viewing an individual post/page in the Control Panel
+- Allows non-super admins to moderate contents
+- Prevents Akismet API call failures from stopping requests
+- Fixes a bug that would cause comment failure on non well-formed comment submissions
+
 1.5.5
 Fix
 - Updates Meerkat to be compatible with Statamic's session and event handlers (#10 https://github.com/Stillat/meerkat-v1hub/issues/10)

@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Statamic\Addons\Meerkat\API\URL;
 use Statamic\Addons\Meerkat\MeerkatAPI;
 use Statamic\Addons\Meerkat\Extend\AvatarLoader;
+use Statamic\Addons\Meerkat\Translation\LangPatcher;
 
 class JavaScriptComposer
 {
@@ -64,7 +65,33 @@ class JavaScriptComposer
             return;
         }
 
-        $scripts = '<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/meerkat.js?v=' . MeerkatAPI::version())) . '"></script>' . $scripts;
+
+        $langPatcher = new LangPatcher();
+
+        $langPatches = $langPatcher->getPatches();
+
+        // Control Panel translation structure is:
+        //     window.Statamic.translations.addons.Meerkat::<NAMESPACE>{obj:key>translation}
+        $scripts = '';
+
+        if ($langPatches != null && is_array($langPatches) && count($langPatches) > 0) {
+            $scripts .= '<script>';
+            foreach ($langPatches as $patchCategory => $translationPatches) {
+                $jsCategory = 'addons.'.$patchCategory;
+
+                $scripts .= 'if (typeof Statamic.translations[\''.$jsCategory.'\'] === \'undefined\') { Statamic.translations[\''.$jsCategory.'\'] = {}; }';
+
+                if ($translationPatches != null && is_array($translationPatches) && count($translationPatches) > 0) {
+                    foreach ($translationPatches as $localeKey => $localeValue) {
+                        $jsValue = str_replace('\'', '\\\'', $localeValue);
+                        $scripts .= 'Statamic.translations[\''.$jsCategory.'\'][\''.$localeKey.'\'] = \''.$jsValue.'\';';
+                    }
+                }
+            }
+            $scripts .= '</script>';
+        }
+
+        $scripts .= '<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/meerkat.js?v=' . MeerkatAPI::version())) . '"></script>' . $scripts;
         $scripts .= '<script>Meerkat.version = "' . MeerkatAPI::version() . '";</script>';
 
         // Add the Meerkat configuration to the mix.

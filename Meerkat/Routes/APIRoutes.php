@@ -149,7 +149,16 @@ trait APIRoutes
      */
     public function getApiComments(Manager $manager)
     {
-        $currentLocale = meerkat_get_config('cp.locale', 'en');
+        $currentLocale = 'en';
+
+        try {
+            $appConfig = app('config');
+
+            if ($appConfig != null) {
+                $currentLocale = $appConfig->get('app.locale');
+            }
+        } catch (\Exception $e) {
+        }
 
         $columns = [
             [
