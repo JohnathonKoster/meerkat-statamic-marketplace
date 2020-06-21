@@ -384,6 +384,8 @@ class Stream implements Countable
         return with(new Factory)->processCollection($comments);
     }
 
+    private $retrievalErrors = [];
+
     private function getCommentsFromDirectories($directories, $flatList = false)
     {
         if (count($directories) == 0) {
@@ -432,6 +434,7 @@ class Stream implements Countable
             if (Arr::has($data, 'content')) {
                 $data['content_markdown'] = $data['content'];
                 $data['content'] = markdown($data['content']);
+                $data['comment'] = markdown($data['content']);
             }
 
             $data['context'] = $this->getContext(explode('/', $commentPath)[1]);
@@ -458,15 +461,34 @@ class Stream implements Countable
                 if (array_key_exists('content', $data)) {
                     $data['comment'] = $data['content'];
                 }
+            } else {
+                // In a situation where we can verify that there is no substantial content,
+                // we will utilize the new [No Content] (en) error string, and mark the
+                // comment as spam.
+                if (trim(preg_replace('/\s\s+/', '', $data['comment'])) == "") {
+                    $data['comment'] = $this->trans('errors.comment_no_content');
+                    $data['spam'] = true;
+                }
             }
 
-            $comment = new Comment;
-            $comment->form($form);
-            $comment->data($data);
+            try {
+                $comment = new Comment;
+                $comment->form($form);
+                $comment->data($data);
 
-            return $comment;
+                return $comment;
+            } catch (\Exception $e) {
+                if (array_key_exists('id', $data)) {
+                    $this->retrievalErrors[$data['id']] = $e;
+                }
+            }
+        })->keyBy('id')->filter(function ($d) {
+            if ($d === null) {
+                return false;
+            }
 
-        })->keyBy('id');
+            return true;
+        });
 
         // If the comment is a reply, we will grab the parent comment
         // instance from the collection. This way we always have a
@@ -484,7 +506,13 @@ class Stream implements Countable
         // through all of the comments and determine if it is a
         // reply to the current Comment root instance. This
         // process will also set the thread participants.
-        $comments->each(function (Comment $comment) use (&$comments, $flatList) {
+        $comments->filter(function ($d) {
+            if ($d === null) {
+                return false;
+            }
+
+            return true;
+        })->each(function (Comment $comment) use (&$comments, $flatList) {
 
             $commentParticipants = [];
 
@@ -530,7 +558,13 @@ class Stream implements Countable
             $comment->setParticipants($commentParticipants);            
         });
 
-        $sortedComments = $comments->sortBy('id');
+        $sortedComments = $comments->filter(function ($d) {
+            if ($d === null) {
+                return false;
+            }
+
+            return true;
+        })->sortBy('id');
 
         $sortedComments->each(function (Comment $comment) {
             if (! $comment->isRoot()) {
@@ -551,6 +585,15 @@ class Stream implements Countable
         }
 
         $this->comments = $comments;
+
+        if (count($this->retrievalErrors) > 0) {
+            foreach ($this->retrievalErrors as $commentId => $e) {
+                $exceptionMessage = $e->getMessage();
+
+                \Log::error("Comment retrieval error for [$commentId]: [$$exceptionMessage]");
+                \Log::error($e);
+            }
+        }
 
         return $comments;
     }

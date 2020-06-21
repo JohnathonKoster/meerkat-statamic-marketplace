@@ -5,6 +5,9 @@ return [
     'edit_input_no_comment' => 'There was no comment provided to edit!',
     'edit_input_invalid_comment' => 'You must supply a value for the comment!',
 
+    'error_in' => 'Error triggered in :location',
+    'comment_no_content' => '[No Content]',
+
     'comments_create_reply' => 'Could Not Create Reply',
     'comments_create_reply_validation' => 'There are some problems with the data.',
     'comments_create_reply_generic' => 'There was a problem creating the reply',

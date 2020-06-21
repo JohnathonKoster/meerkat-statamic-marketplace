@@ -209,9 +209,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             }
         }
         this.setHeaders(this.filter);
-        if (this.can('super')) {
+        /*if (this.can('super')) {*/
             this.addActionPartial();
-        }
+        /*}*/
 
         var _vm = this;
         window.onpopstate = function (event) {
@@ -493,14 +493,29 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             item.writing_reply = true;
         },
         raiseError: function (messageTitle, fallbackMessage, data) {
-            if (typeof data !== 'undefined' && data != null && data.length > 0) {
+            if (typeof data !== 'undefined' && data != null) {
                 var dataMessage = '<ul>';
+                var allErrors = [];
 
-                var _errorMesssages = data.length,
+                console.log(data);
+
+                for (var errorBucket in data) {
+                    if (data.hasOwnProperty(errorBucket)) {
+                        if (errorBucket.length > 0) {
+                            console.log('checking error bucket', errorBucket);
+                            console.log('inner buc', data[errorBucket]);
+                            for (var i = 0; i < data[errorBucket].length; i += 1) {
+                                allErrors.push(data[errorBucket][i]);
+                            }
+                        }
+                    }
+                }
+
+                var _errorMesssages = allErrors.length,
                     _i = 0;
                 
                 for (_i; _i < _errorMesssages; _i++) {
-                    dataMessage += '<li>' + data[_i] + '</li>';
+                    dataMessage += '<li>' + allErrors[_i] + '</li>';
                 }
 
                 dataMessage += '</ul>';
@@ -545,7 +560,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 var validationError = translate('addons.Meerkat::errors.comments_create_reply_validation');
                 var genericError = translate('addons.Meerkat::errors.comments_create_reply_generic');
 
-                if (typeof e.data !== 'undefined' && typeof e.data.errors !== undefined && e.data.errors.length > 0) {
+                console.log('post reply', e);
+
+                if (typeof e.data !== 'undefined' && typeof e.data.errors !== undefined) {
                     this.raiseError(title, validationError, e.data.errors);
                 } else {    
                     this.raiseError(title, genericError);

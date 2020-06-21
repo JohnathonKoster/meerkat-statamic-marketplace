@@ -515,8 +515,29 @@ class Comment extends Submission
         $originalValue = '';
         $updatingContentField = false;
 
-        if (isset($data['content'], $data['comment']) && $this->hasDirtyAttribute('comment')) {
+
+        if ((isset($data['content']) ||  isset($data['comment'])) && $this->hasDirtyAttribute('comment')) {
             $updatingContentField = true;
+            $this->watchedDirtyAttributes[] = 'comment';
+        }
+
+        if (isset($data['content']) || isset($data['comment']))
+        {
+            if ($content = array_get($data, 'content')) {
+                if (array_key_exists('content_markdown', $this->sourceData)) {
+                    if (trim($content) != trim($this->sourceData['content_markdown'])) {
+                        $updatingContentField = true;
+                        $this->watchedDirtyAttributes[] = 'comment';
+                    }
+                }
+            } else if ($content = array_get($data, 'comment')) {
+                if (array_key_exists('content_markdown', $this->sourceData)) {
+                    if (trim($content) != trim($this->sourceData['content_markdown'])) {
+                        $updatingContentField = true;
+                        $this->watchedDirtyAttributes[] = 'comment';
+                    }
+                }
+            }
         }
 
         if ($content = array_get($data, 'content')) {
@@ -531,11 +552,15 @@ class Comment extends Submission
         }
 
         if (isset($data['comment'])) {
-            $originalMarkdown = $data['comment_markdown'];
-            $originalValue = $data['comment'];
-            unset($data['comment']);
-            // Remove the values that are just used internally.
-            unset($data['comment_markdown']);
+            // This may have been reset.
+            if (array_key_exists('content_markdown', $data)) {
+                $originalMarkdown = $data['content_markdown'];
+                $originalValue = $data['comment'];
+                unset($data['comment']);
+                // Remove the values that are just used internally.
+                unset($data['comment_markdown']);
+            }
+
             $contentValue = 'comment';
         }
 
@@ -574,6 +599,20 @@ class Comment extends Submission
         if ($this->wasSoftDeleted) {
             $data['is_deleted'] = true;
         }
+
+        if (array_key_exists('content', $data)) {
+            unset($data['content']);
+        }
+
+        if (array_key_exists('content_markdown', $data)) {
+            unset($data['content_markdown']);
+        }
+
+        if (array_key_exists('comment_markdown', $data)) {
+            unset($data['comment_markdown']);
+        }
+
+        $data['comment'] = $originalValue;
 
         $this->disk->put($filename, YAML::dump($data, $content));
     }

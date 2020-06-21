@@ -458,7 +458,29 @@ class MeerkatController extends Controller
             list($errors, $submission) = $this->runCreatingEvent($submission);
         } catch (\Exception $e) {
             // Protect against configuration or third-parties from breaking the submission.
-            $errors['creating'] = $this->trans('errors.comments_create_reply_validation');
+            $errors['creating'][] = $this->trans('errors.comments_create_reply_validation');
+
+            $exceptionMessage = $e->getMessage();
+            $trace = $e->getTrace();
+
+            if ($trace != null && is_array($trace) && count($trace) > 0) {
+                foreach ($trace as $item) {
+                    if (array_key_exists('file', $item)) {
+                        $file = $item['file'];
+
+                        $file = str_replace('\\', '/', $file);
+                        if (Str::contains(strtolower($file), 'site/addons')) {
+                            $file = substr($file, strpos($file, 'site/addons'));
+                            $exceptionMessage .= ' '.$this->trans('errors.error_in', [
+                                    'location' => $file
+                                ]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $errors['creating'][] = $exceptionMessage;
         }
 
         $authUserByPassCaptcha = $this->getConfig('captcha_auth_bypass', true);

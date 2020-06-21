@@ -26,6 +26,7 @@ class Submission extends StatamicSubmission implements ArrayAccess, Arrayable, J
      * @var array
      */
     protected $originalData = [];
+    protected $sourceData = [];
 
     /**
      * The supplement data.
@@ -98,6 +99,7 @@ class Submission extends StatamicSubmission implements ArrayAccess, Arrayable, J
     {
         if (!is_null($data)) {
             $this->originalData = $data;
+            $this->sourceData = $data;
 
             if (isset($this->originalData['id'])) {
                 $this->id = $this->originalData['id'];

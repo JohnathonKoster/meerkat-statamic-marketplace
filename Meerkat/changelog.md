@@ -1,3 +1,12 @@
+1.5.?
+- FIX: Corrects an issue preventing comments from being correctly saved
+- NEW: Adds a `errors.error_in` translation string that is used when reporting errors on the Control Panel
+- NEW: Adds a `errors.comment_no_content` translation string that is supplied when a comment manifests without content
+- IMPROVE: If an error occurs when loading a comment from the data-source, it will not block all comments from loading
+    - Exception output and comment IDs logged to the Error log.
+- IMPROVE: Source data stored internally with the comment submission, to make mutation observation more reliable
+- IMPROVE: Control Panel error messages provide more details
+
 1.5.64
 - Adds the `getPublishedCommentCount` helper function the Meerkat API to easily get the total number of replies, including replies for a comment stream.
   - Usage (from within site/helpers/Tags.php) `$this->api('Meerkat')->getPublishedCommentCount($postId)`
