@@ -452,11 +452,20 @@ class Stream implements Countable
 
             return true;
         })->map(function ($data) use (&$form) {
+
+            if (!array_key_exists('comment', $data)) {
+                // Populate the comment field, if not available.
+                if (array_key_exists('content', $data)) {
+                    $data['comment'] = $data['content'];
+                }
+            }
+
             $comment = new Comment;
             $comment->form($form);
             $comment->data($data);
 
             return $comment;
+
         })->keyBy('id');
 
         // If the comment is a reply, we will grab the parent comment

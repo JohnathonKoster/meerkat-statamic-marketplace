@@ -177,6 +177,7 @@ trait APIRoutes
         if ($streamFilter == null) {
             $items = $manager->allComments(true);
         } else {
+
             $items = $manager->getStreamComments($streamFilter, true);
         }
 
