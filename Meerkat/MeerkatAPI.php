@@ -57,6 +57,30 @@ class MeerkatAPI extends API
     }
 
     /**
+     * Returns the published comment count for the given post ID.
+     *
+     * @param $postId
+     * @return int
+     */
+    public static function getPublishedCommentCount($postId)
+    {
+        $commentCount = 0;
+
+        if ($postId !== null) {
+            // Create instance of Stream Manager
+            $manager = app(\Statamic\Addons\Meerkat\Comments\Manager::class);
+
+            $items = $manager->getStreamComments($postId, true);
+            $commentCount = $items->filter(function ($comment) {
+                // Filters to just published comments.
+                return $comment->published();
+            })->count();
+        }
+
+        return $commentCount;
+    }
+
+    /**
      * Gets the comments for the given context.
      *
      * @param  $context

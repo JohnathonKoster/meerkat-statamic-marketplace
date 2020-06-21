@@ -1,3 +1,7 @@
+1.5.64
+- Adds the `getPublishedCommentCount` helper function the Meerkat API to easily get the total number of replies, including replies for a comment stream.
+  - Usage (from within site/helpers/Tags.php) `$this->api('Meerkat')->getPublishedCommentCount($postId)`
+
 1.5.63
 - Emits the Statamic Form.submission.creating event to provide compatibility with other plugins
     - If a third-party, or configuration value, causes the 'creating' event to fail, a 'creating' error entry will be provided
