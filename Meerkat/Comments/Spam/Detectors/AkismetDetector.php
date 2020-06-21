@@ -21,6 +21,8 @@ class AkismetDetector implements SpamDetector
      */
     protected $akismet;
 
+    protected $errors = [];
+
     /**
      * The CommentBuilder factory.
      *
@@ -45,7 +47,11 @@ class AkismetDetector implements SpamDetector
      */
     public function submitSpam($data)
     {
-        $this->akismet->submitSpam($this->makeComment($data));
+        try {
+            $this->akismet->submitSpam($this->makeComment($data));
+        } catch (\Exception $e) {
+            $this->errors[] = $e;
+        }
     }
 
     /**
@@ -57,7 +63,11 @@ class AkismetDetector implements SpamDetector
      */
     public function submitHam($data)
     {
-        $this->akismet->submitHam($this->makeComment($data));
+        try {
+            $this->akismet->submitHam($this->makeComment($data));
+        } catch (\Exception $e) {
+            $this->errors[] = $e;
+        }
     }
 
     /**
@@ -72,7 +82,6 @@ class AkismetDetector implements SpamDetector
      */
     private function transform($data)
     {
-
         $akismetData = [];
         
         foreach ($this->getConfig('akismet_fields') as $akismetKey => $meerkatKey) {
@@ -111,7 +120,16 @@ class AkismetDetector implements SpamDetector
      */
     public function isSpam($data)
     {
-        return $this->akismet->commentCheck($this->makeComment($data));
+        // If there is an Akismet failure, should we automatically mark as spam?
+        $spamOnFailure = $this->getConfig('akismet_spam_on_failure', false);
+
+        try {
+            return $this->akismet->commentCheck($this->makeComment($data));
+        } catch (\Exception $e) {
+            $this->errors[] = $e;
+        }
+
+        return $spamOnFailure;
     }
 
 
