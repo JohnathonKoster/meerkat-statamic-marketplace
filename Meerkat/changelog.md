@@ -1,3 +1,8 @@
+1.5.63
+- Emits the Statamic Form.submission.creating event to provide compatibility with other plugins
+    - If a third-party, or configuration value, causes the 'creating' event to fail, a 'creating' error entry will be provided
+    - Control Panel, or other authenticated users, will be by-pass "captcha" validation messages by default
+      This behavior can be changed by adding a `captcha_auth_bypass` configuration entry to `settings/addons/meerkat.yaml` and setting it's value to `false`
 1.5.62
 - Patches the Meerkat Statamic Control Panel translations with fallback values when appropriate
 - Improves locale detection in the API Comments response 

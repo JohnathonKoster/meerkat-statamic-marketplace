@@ -446,12 +446,33 @@ class MeerkatController extends Controller
 
         try {
             $submission->data($fields);
-
         } catch (PublishException $e) {
             $this->emitEvent('comment.attach.failed', $e);
             return $this->formFailure($params, $e->getErrors(), MeerkatTags::MEERKAT_FORMSET);
         } catch (HoneypotException $e) {
             return $this->formSuccess($params, $submission);
+        }
+
+
+        try {
+            list($errors, $submission) = $this->runCreatingEvent($submission);
+        } catch (\Exception $e) {
+            // Protect against configuration or third-parties from breaking the submission.
+            $errors['creating'] = $this->trans('errors.comments_create_reply_validation');
+        }
+
+        $authUserByPassCaptcha = $this->getConfig('captcha_auth_bypass', true);
+
+        if ($authenticatedRequest && $authUserByPassCaptcha) {
+            if ($errors) {
+                if (array_key_exists('captcha', $errors)) {
+                    unset($errors['captcha']);
+                }
+            }
+        }
+
+        if ($errors) {
+            return $this->formFailure($params, $errors, MeerkatTags::MEERKAT_FORMSET);
         }
 
         if ($isReply) {
@@ -467,6 +488,43 @@ class MeerkatController extends Controller
         event('Form.submission.created', $submission);
 
         return $this->formSuccess($params, $submission);
+    }
+
+    /**
+     * Emits an event, impersonating the Statamic Form context.
+     *
+     * @param $event
+     * @param $payload
+     * @return array|null
+     */
+    private function emitCoreFormEvent($event, $payload)
+    {
+        return event('Form.'.$event, $payload);
+    }
+
+    private function runCreatingEvent($submission)
+    {
+        $errors = [];
+
+        $responses = $this->emitCoreFormEvent('submission.creating', $submission);
+
+        foreach ($responses as $response) {
+            // Ignore any non-arrays
+            if (! is_array($response)) {
+                continue;
+            }
+
+            // If the event returned errors, tack those onto the array.
+            if ($response_errors = array_get($response, 'errors')) {
+                $errors = array_merge($response_errors, $errors);
+                continue;
+            }
+
+            // If the event returned a submission, we'll replace it with that.
+            $submission = array_get($response, 'submission');
+        }
+
+        return [$errors, $submission];
     }
 
     private function formFailure($params, $errors, $formset)
