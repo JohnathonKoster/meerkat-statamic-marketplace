@@ -1173,12 +1173,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
         },
 
         editComment: function (id) {
-            var item = _.findWhere(this.items, {id: id});
             item.editing = true;
         },
 
         replyToComment: function (id) {
-            var item = _.findWhere(this.items, {id: id});
             item.writing_reply = true;
         },
         raiseError: function (messageTitle, fallbackMessage, data) {
@@ -1316,22 +1314,18 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
         },
 
         changeItemToApprove: function (id) {
-            var item = _.findWhere(this.items, {id: id});
             item.published = true;
         },
 
         changeItemToUnApproved: function (id) {
-            var item = _.findWhere(this.items, {id: id});
             item.published = false;
         },
 
         changeItemToIsSpam: function (id) {
-            var item = _.findWhere(this.items, {id: id});
             item.spam = true;
         },
 
         changeItemToNotSpam: function (id) {
-            var item = _.findWhere(this.items, {id: id});
             item.spam = false;
         },
 
