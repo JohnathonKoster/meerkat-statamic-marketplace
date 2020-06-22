@@ -5,22 +5,29 @@ return [
     'confirm_delete_comment' => 'This comment will be deleted|The selected comments will be deleted',
     'confirm_mark_as_spam' => 'This comment will be marked as spam|The selected comments will be marked as spam',
     'confirm_mark_as_not_spam' => 'The comment will be marked as not spam|The selected comments will be marked as not spam',
+
     'approve' => 'Approve',
+    'approving' => 'Approving...',
     'approve_desc' => 'Make this comment public on your site',
     'approve_success' => 'The comment was approved successfully.|The comments were approved successfully.',
     'approve_failed' => 'The comment was not approved. There error message was: |The comments were not approved. The error message was: ',
+
     'unapprove' => 'Unapprove',
+    'unapproving' => 'Unapproving...',
     'unapprove_desc' => 'Unapprove this comment so it will not appear on your site',
     'unapprove_success' => 'The comment was unapproved successfully.|The comments were unapproved successfully.',
     'unapprove_failed' => 'The comment was not unapproved. The error message was: |The comments were not unapproved. The error message was: ',
-    'delete_success' => 'The comment was removed successfully.|The comments were removed succesfully.',
+    'delete_success' => 'The comment was removed successfully.|The comments were removed successfully.',
+
     'delete_failed' => 'The comment was not able to be removed.|The comments were not able to be removed.',
     'reply' => 'Reply',
     'replying' => 'Replying...',
     'reply_desc' => 'Reply to this comment\'s author',
     'edit' => 'Edit',
     'edit_desc' => 'Edit the contents of this comment',
+
     'spam' => 'Spam',
+    'spam_submitting' => 'Submitting...',
     'spam_desc' => 'Mark this comment as spam',
     'spam_success' => 'The comment was successfully marked as spam.|The comments were marked as spam.',
     'spam_failed' => 'The comment was not marked as spam. The error message was: |The comments were not marked as spam. The error message was: ',
@@ -28,7 +35,10 @@ return [
     'not_spam_desc' => 'Mark this comment as not spam.',
     'not_spam_success' => 'The comment was successfully marked as not spam.|The comments were marked as not spam.',
     'not_spam_failed' => 'The comment could not be marked as not spam. The error message was: |The comments could not be marked as not spam. The error message was: ',
+
     'delete' => 'Delete',
+    'delete_removing' => 'Removing...',
+
     'delete_desc' => 'Remove this comment forever',
     'view_post' => 'View Post',
     'view_post_desc' => 'View the post scrolled to this comment in your browser',

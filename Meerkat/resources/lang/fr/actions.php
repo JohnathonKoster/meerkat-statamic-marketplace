@@ -15,7 +15,6 @@ return [
     'unapprove_failed' => 'Le commentaire n\'a pas été désapprouvé. Le message d\'erreur était : |Les commentaires n\'ont pas été désapprouvés. Le message d\'erreur était : ',
     'delete_success' => 'Le commentaire a bien été supprimé.|Les commentaires ont bien été supprimés.',
     'delete_failed' => 'Le commentaire n\'a pu être supprimé.|Les commentaires n\'ont pu être supprimés.',
-    'reply' => 'Répondre',
     'replying' => 'Réponse en cours...',
     'reply_desc' => 'Répondre à l\'auteur de ce commentaire',
     'edit' => 'Modifier',

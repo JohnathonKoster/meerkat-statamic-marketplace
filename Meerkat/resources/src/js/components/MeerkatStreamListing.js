@@ -392,9 +392,23 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
             var _vm = this;
             this.$http.get(this.ajax.get, params, function (data, status, request) {
+                var comments = [];
+
+                /* Add some state properties. */
+                for (let i = 0; i < data.items.data.length; i += 1) {
+                    var comment = data.items.data[i];
+                    comment.is_approving = false;
+                    comment.is_unapproving = false;
+                    comment.is_markingspam = false;
+                    comment.is_markingnotspam = false;
+                    comment.is_deleting = false;
+                    comment.is_taking_action = false;
+
+                    comments.push(comment);
+                }
 
                 if (_vm.tableOptions.paginate == true) {
-                    _vm.items = data.items.data;
+                    _vm.items = comments;
                     _vm.pagination.from = data.items.from;
                     _vm.pagination.to = data.items.to;
                     _vm.pagination.prevPage = data.items.prev_page_url;
@@ -402,7 +416,7 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                     _vm.pagination.lastPage = data.items.last_page;
                     _vm.pagination.page = _vm.tableOptions.currentPage;
                 } else {
-                    _vm.items = data.items;
+                    _vm.items = comments;
                 }
                 
                 if (typeof callback !== 'undefined' && callback != null) {
@@ -531,9 +545,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 swal(messageTitle, fallbackMessage, 'error');                
             }
         },
-        createNewReply: function (id) {
+        createNewReply: function (item) {
             var self = this;
-            var item = _.findWhere(this.items, {id: id});
+            var id = item.id;
 
             item.saving = true;
 
@@ -549,8 +563,13 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                     self.instanceChanges.commentReplies.push(data.submission);
                     self.refreshCounts();
                 } else {
+                    item.saving = false;
+
                     self.$parent.flashSuccess = false;
                     self.$parent.flashError = translate('addons.Meerkat::actions.save_failure') + data.errorMessage;
+                    var title = translate('addons.Meerkat::errors.comments_create_reply');
+
+                    self.raiseError(title, translate('addons.Meerkat::actions.save_failure') + data.errorMessage);
                 }
 
                 // Indicate that we are no longer saving the comment, regardless of how it went.
@@ -560,31 +579,27 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 var validationError = translate('addons.Meerkat::errors.comments_create_reply_validation');
                 var genericError = translate('addons.Meerkat::errors.comments_create_reply_generic');
 
-                console.log('post reply', e);
+                item.saving = false;
 
                 if (typeof e.data !== 'undefined' && typeof e.data.errors !== undefined) {
                     this.raiseError(title, validationError, e.data.errors);
                 } else {    
                     this.raiseError(title, genericError);
                 }
-
-                item.saving = false;
             });
         },
 
-        cancelPostReply: function (id) {
-            var item = _.findWhere(this.items, {id: id});
+        cancelPostReply: function (item) {
             item.writing_reply = false;
         },
 
-        cancelItemEdit: function (id) {
-            var item = _.findWhere(this.items, {id: id});
+        cancelItemEdit: function (item) {
             item.editing = false;
         },
 
-        saveItemEdits: function (id) {
+        saveItemEdits: function (item) {
             var self = this;
-            var item = _.findWhere(this.items, {id: id});
+            var id = item.id;
 
             // Indicate that we are saving the comment.
             item.saving = true;
@@ -600,6 +615,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 } else {
                     self.$parent.flashSuccess = false;
                     self.$parent.flashError = translate('addons.Meerkat::actions.save_failure') + data.errorMessage;
+                    var title = translate('addons.Meerkat::errors.comments_save');
+
+                    self.raiseError(title, translate('addons.Meerkat::actions.save_failure') + data.errorMessage);
                 }
 
                 // Indicate that we are no longer saving the comment, regardless of how it went.
@@ -609,13 +627,13 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 var validationError = translate('addons.Meerkat::errors.comments_save_validation');
                 var genericError = translate('addons.Meerkat::errors.comments_save_generic');
 
-                if (typeof e.data !== 'undefined' && typeof e.data.errors !== undefined && e.data.errors.length > 0) {
+                item.saving = false;
+
+                if (typeof e.data !== 'undefined' && typeof e.data.errors !== undefined) {
                     this.raiseError(title, validationError, e.data.errors);
                 } else {    
                     this.raiseError(title, genericError);
                 }
-
-                item.saving = false;
             });
         },
 
@@ -645,8 +663,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             item.spam = false;
         },
 
-        deleteItem: function (id) {
+        deleteItem: function (item) {
             var self = this;
+            var id = item.id;
 
             swal({
                 type: 'warning',
@@ -656,6 +675,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
+                item.is_taking_action = true;
+                item.is_deleting = true;
+
                 self.$http.delete(self.ajax.delete, {ids: [id]}, function (data) {
                     _.each(data.removed, function (removedId) {
                         self.removeItemFromList(removedId);
@@ -665,9 +687,14 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                     self.removeItemFromList(id);
                     self.instanceChanges.commentRemovals.push(id);
                     self.refreshCounts();
+                    item.is_taking_action = false;
+                    item.is_deleting = false;
                 }).catch(function (e) {
                     var title = translate('addons.Meerkat::errors.comments_remove');
                     var genericError = translate('addons.Meerkat::errors.comments_remove_desc');
+
+                    item.is_taking_action = false;
+                    item.is_deleting = false;
 
                     this.raiseError(title, genericError);
                 });
@@ -705,16 +732,20 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                     var title = translate('addons.Meerkat::errors.comments_remove_plural');
                     var genericError = translate('addons.Meerkat::errors.comments_remove_plural_desc');
 
-                    this.raiseError(title, genericError);
                     self.applyBulkActions = false;
+
+                    this.raiseError(title, genericError);
                 });
             });
         },
 
-        approveComment: function (id) {
+        approveComment: function (item) {
             var self = this;
             self.applyingBulkActions = true;
-            self.$http.post(self.ajax.approve, {ids: [id]}, function (data) {
+            item.is_approving = true;
+            item.is_taking_action = true;
+
+            self.$http.post(self.ajax.approve, {ids: [item.id]}, function (data) {
                 if (data.success) {
                     self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.approve_success', data.approved.length);
                     _.each(data.approved, function (approvedId) {
@@ -724,13 +755,20 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                         self.instanceChanges.commentApprovals.push(approvedId);
                     });
                     self.refreshCounts();
+                    item.is_approving = false;
+                    item.is_taking_action = false;
                 } else {
                     self.$parent.flashSuccess = false;
                     self.$parent.flashError = translate_choice('addons.Meerkat::actions.approve_failed', data.approved.length) + data.errorMessage;
+                    item.is_approving = false;
+                    item.is_taking_action = false;
+
                 }
             }).catch(function (e) {
                 var title = translate('addons.Meerkat::errors.comments_approve');
                 var genericError = translate('addons.Meerkat::errors.comments_approve_desc');
+                item.is_approving = false;
+                item.is_taking_action = false;
 
                 this.raiseError(title, genericError);
             });
@@ -765,8 +803,12 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             });
         },
 
-        unApproveComment: function (id) {
+        unApproveComment: function (item) {
             var self = this;
+            var id = item.id;
+
+            item.is_taking_action = true;
+            item.is_unapproving = true;
 
             self.$http.post(self.ajax.unapprove, {ids: [id]}, function (data) {
                 if (data.success) {
@@ -778,14 +820,25 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                         self.metrics.pending++;
                         self.instanceChanges.commentUnApprovals.push(unApprovedId);
                     });
+
+
+                    item.is_taking_action = false;
+                    item.is_unapproving = false
                     self.refreshCounts();
                 } else {
                     self.$parent.flashSuccess = false;
                     self.$parent.flashError = translate_choice('addons.Meerkat::actions.unapprove_failed', data.unapproved.length) + data.errorMessage;
+
+                    item.is_taking_action = false;
+                    item.is_unapproving = false;
                 }
             }).catch(function (e) {
                 var title = translate('addons.Meerkat::errors.comments_unapprove');
                 var genericError = translate('addons.Meerkat::errors.comments_unapprove_desc');
+
+
+                item.is_taking_action = false;
+                item.is_unapproving = false;
 
                 this.raiseError(title, genericError);
             });
@@ -815,14 +868,15 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             }).catch(function (e) {
                 var title = translate('addons.Meerkat::errors.comments_unapprove_plural');
                 var genericError = translate('addons.Meerkat::errors.comments_unapprove_desc_plural');
+                self.applyBulkActions = false;
 
                 this.raiseError(title, genericError);
-                self.applyBulkActions = false;
             });
         },
 
-        markItemAsSpam: function (id) {
+        markItemAsSpam: function (item) {
             var self = this;
+            var id = item.id;
 
             swal({
                 type: 'warning',
@@ -832,6 +886,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
+                item.is_taking_action = true;
+                item.is_markingspam = true;
+
                 self.$http.post(self.ajax.spam, {ids: [id]}, function (data) {
                     if (data.success) {
                         self.$parent.flashError = false;
@@ -843,14 +900,19 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                             self.instanceChanges.commentMarkedAsSpam.push(markedAsSpam);
                         });
                         self.refreshCounts();
+                        item.is_taking_action = false;
+                        item.is_markingspam = false;
                     } else {
+                        item.is_taking_action = false;
+                        item.is_markingspam = false;
                         self.$parent.flashSuccess = false;
                         self.$parent.flashError = translate_choice('addons.Meerkat::actions.spam_failed', data.marked.length);
                     }
                 }).catch(function (e) {
                     var title = translate('addons.Meerkat::errors.comments_mark_spam');
                     var genericError = translate('addons.Meerkat::errors.comments_mark_spam_desc');
-
+                    item.is_taking_action = false;
+                    item.is_markingspam = false;
                     this.raiseError(title, genericError);
                 });
             });
@@ -889,15 +951,16 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 }).catch(function (e) {
                     var title = translate('addons.Meerkat::errors.comments_mark_spam_plural');
                     var genericError = translate('addons.Meerkat::errors.comments_mark_spam_desc_plural');
+                    self.applyingBulkActions = false;
 
                     this.raiseError(title, genericError);
-                    self.applyingBulkActions = false;
                 });
             });
         },
 
-        markItemAsNotSpam: function (id) {
+        markItemAsNotSpam: function (item) {
             var self = this;
+            var id = item.id;
 
             swal({
                 type: 'warning',
@@ -907,6 +970,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 cancelButtonText: translate('addons.Meerkat::actions.cancel'),
                 showCancelButton: true
             }, function () {
+                item.is_taking_action = true;
+                item.is_markingnotspam = true;
+
                 self.$http.post(self.ajax.notspam, {ids: [id]}, function (data) {
                     if (data.success) {
                         self.$parent.flashError = false;
@@ -917,14 +983,21 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                             self.metrics.approved++;
                             self.instanceChanges.commentMarkedAsNotSpam.push(markedAsNotSpam);
                         });
+                        item.is_taking_action = false;
+                        item.is_markingnotspam = false;
                         self.refreshCounts();
                     } else {
                         self.$parent.flashSuccess = false;
+                        item.is_taking_action = false;
+                        item.is_markingnotspam = false;
                         self.$parent.flashError = translate_choice('addons.Meerkat::actions.not_spam_failed', data.marked.length);
                     }
                 }).catch(function (e) {
                     var title = translate('addons.Meerkat::errors.comments_mark_not_spam');
                     var genericError = translate('addons.Meerkat::errors.comments_mark_not_spam_desc');
+
+                    item.is_taking_action = false;
+                    item.is_markingnotspam = false;
 
                     this.raiseError(title, genericError);
                 });
@@ -964,9 +1037,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 }).catch(function (e) {
                     var title = translate('addons.Meerkat::errors.comments_mark_not_spam_plural');
                     var genericError = translate('addons.Meerkat::errors.comments_mark_not_spam_desc_plural');
+                    self.applyBulkActions = false;
 
                     this.raiseError(title, genericError);
-                    self.applyBulkActions = false;
                 });
             });
         },
