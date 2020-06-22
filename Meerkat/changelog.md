@@ -13,7 +13,22 @@
     - Expands Spam Guard CP error reporting (Guard contract expanded)
     - Third-party Guard service failures no longer block save operations
     - CP error messages will correctly reflect Guard operation results
-
+    - Simplified comment save logic
+    
+- Translation Strings Added:
+    - actions.approving
+    - actions.unapproving
+    - actions.replying
+    - actions.spam_submitting
+    - actions.delete_removing
+    - errors.error_in
+    - errors.comment_no_content
+    - errors.guard_service_error
+    - errors.guard_comment_saved_error
+    - errors.guard_comment_ham_saved_error
+    - errors.guard_multiple_spam_submit_errors
+    - errors.guard_multiple_ham_submit_errors
+    
 1.5.64
 - Adds the `getPublishedCommentCount` helper function the Meerkat API to easily get the total number of replies, including replies for a comment stream.
   - Usage (from within site/helpers/Tags.php) `$this->api('Meerkat')->getPublishedCommentCount($postId)`
