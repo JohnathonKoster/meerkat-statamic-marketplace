@@ -145,20 +145,41 @@ class CommentManager
      * Marks the specified comments as spam.
      *
      * @param  array $commentIDs
-     * @return CommentCollection
+     * @return array
      */
     public function markCommentsAsSpam(array $commentIDs)
     {
-        return $this->getComments($commentIDs)->each(function (Comment $comment) {
+        $wasSuccess = true;
+        $wasSaved = false;
+        $specimenSent = false;
+        $errors = [];
+
+        $this->getComments($commentIDs)->each(function (Comment $comment) use (&$wasSaved, &$wasSuccess, &$errors, &$specimenSent) {
             $comment->spam = true;
             $comment->save();
 
+            $wasSaved = true;
+
             if ($this->getConfigBool('guard_submit_results')) {
-                $this->guard->submitSpam($comment->getStoredData());                
+                $specimenSent = true;
+
+                $result = $this->guard->submitSpam($comment->getStoredData());
+
+                if ($result['wasSuccess'] == false) {
+                    $wasSuccess = false;
+                    $errors = array_merge($errors, $result['errors']);
+                }
             }
 
             $this->emitEvent('comment.markedAsSpam', $comment);
         });
+
+        return [
+            'wasSuccess' => $wasSuccess,
+            'wasSaved' => $wasSaved,
+            'didSend' => $specimenSent,
+            'errors' => $errors
+        ];
     }
 
     /**
@@ -169,16 +190,37 @@ class CommentManager
      */
     public function markCommentsAsNotSpam(array $commentIDs)
     {
-        return $this->getComments($commentIDs)->each(function (Comment $comment) {
+        $wasSuccess = true;
+        $wasSaved = false;
+        $specimenSent = false;
+        $errors = [];
+
+        $this->getComments($commentIDs)->each(function (Comment $comment) use (&$wasSaved, &$wasSuccess, &$errors, &$specimenSent) {
             $comment->spam = false;
             $comment->save();
-            
+
+            $wasSaved = true;
+
             if ($this->getConfigBool('guard_submit_results')) {
-                $this->guard->submitHam($comment->getStoredData());
+                $specimenSent = true;
+
+                $result = $this->guard->submitHam($comment->getStoredData());
+
+                if ($result['wasSuccess'] == false) {
+                    $wasSuccess = false;
+                    $errors = array_merge($errors, $result['errors']);
+                }
             }
 
             $this->emitEvent('comment.markedAsNotSpam', $comment);
         });
+
+        return [
+            'wasSuccess' => $wasSuccess,
+            'wasSaved' => $wasSaved,
+            'didSend' => $specimenSent,
+            'errors' => $errors
+        ];
     }
 
     /**

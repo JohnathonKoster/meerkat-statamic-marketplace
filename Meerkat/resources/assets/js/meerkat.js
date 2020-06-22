@@ -337,7 +337,7 @@ Meerkat.setDossierCellTemplate("\n    <a v-if=\"$index === 0\" :href=\"item.edit
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
-Meerkat.setMeerkatAddActionPartialTemplate("\n    <li v-if=\"item['published'] === false && item['is_approving'] === false\"><a href=\"#\" @click.prevent=\"call('approveComment', item)\" title=\"{{ translate('addons.Meerkat::actions.approve_desc') }}\"><span class=\"icon icon-check\"></span> {{ translate('addons.Meerkat::actions.approve') }}</a></li>\n    <li v-if=\"item['published'] === false && item['is_approving'] === true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.approving') }}</a></li>\n    \n    <li v-if=\"item['published'] === true && item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('unApproveComment', item)\" title=\"{{ translate('addons.Meerkat::actions.unapprove_desc') }}\">{{ translate('addons.Meerkat::actions.unapprove') }}</a></li>\n    <li v-if=\"item['published'] === true && item['is_unapproving'] === true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.unapproving') }}</a></li>\n    \n    \n    <li v-if=\"item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('replyToComment', item.id)\" title=\"{{ translate('addons.Meerkat::actions.reply_desc') }}\"><span class=\"icon icon-reply\"></span> {{ translate('addons.Meerkat::actions.reply') }}</a></li>\n    <li v-if=\"item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('editComment', item.id)\" title=\"{{ translate('addons.Meerkat::actions.edit_desc') }}\"><span class=\"icon icon-edit\"></span> {{ translate('addons.Meerkat::actions.edit') }}</a></li>\n\n    <li v-if=\"item['spam'] === false && item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('markItemAsSpam', item)\" title=\"{{ translate('addons.Meerkat::actions.spam_desc') }}\"><span class=\"icon icon-shield\"></span> {{ translate('addons.Meerkat::actions.spam') }}</a></li>\n    <li v-if=\"item['spam'] === false && item['is_markingspam'] == true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.spam_submitting') }}</a></li>\n\n    <li v-if=\"item['spam'] === true && item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('markItemAsNotSpam', item)\" title=\"{{ translate('addons.Meerkat::actions.not_spam_desc') }}\"><span class=\"icon icon-shield\"></span> {{ translate('addons.Meerkat::actions.not_spam') }}</a></li>\n    <li v-if=\"item['spam'] === true && item['is_markingnotspam'] == true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.spam_submitting') }}</a></li>\n\n    <li v-if=\"item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('deleteItem', item)\" title=\"{{ translate('addons.Meerkat::actions.delete_desc') }}\"><span class=\"icon icon-trash\"></span> {{ translate('addons.Meerkat::actions.delete') }}</a></li>\n    <li v-if=\"item['is_deleting'] === true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.delete_removing') }}</a></li>\n\n");
+Meerkat.setMeerkatAddActionPartialTemplate("\n    <li v-if=\"item['published'] === false && item['is_approving'] === false\"><a href=\"#\" @click.prevent=\"call('approveComment', item)\" title=\"{{ translate('addons.Meerkat::actions.approve_desc') }}\"><span class=\"icon icon-check\"></span> {{ translate('addons.Meerkat::actions.approve') }}</a></li>\n    <li v-if=\"item['published'] === false && item['is_approving'] === true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.approving') }}</a></li>\n    \n    <li v-if=\"item['published'] === true && item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('unApproveComment', item)\" title=\"{{ translate('addons.Meerkat::actions.unapprove_desc') }}\">{{ translate('addons.Meerkat::actions.unapprove') }}</a></li>\n    <li v-if=\"item['published'] === true && item['is_unapproving'] === true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.unapproving') }}</a></li>\n    \n    \n    <li v-if=\"item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('replyToComment', item.id)\" title=\"{{ translate('addons.Meerkat::actions.reply_desc') }}\"><span class=\"icon icon-reply\"></span> {{ translate('addons.Meerkat::actions.reply') }}</a></li>\n    <li v-if=\"item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('editComment', item.id)\" title=\"{{ translate('addons.Meerkat::actions.edit_desc') }}\"><span class=\"icon icon-edit\"></span> {{ translate('addons.Meerkat::actions.edit') }}</a></li>\n\n    <li v-if=\"item['spam'] === false && item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('markItemAsSpam', item)\" title=\"{{ translate('addons.Meerkat::actions.spam_desc') }}\"><span class=\"icon icon-shield\"></span> {{ translate('addons.Meerkat::actions.spam') }}</a></li>\n    <li v-if=\"item['spam'] === false && item['is_markingspam'] == true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.spam_submitting') }}</a></li>\n\n    <li v-if=\"item['spam'] === true && item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('markItemAsNotSpam', item)\" title=\"{{ translate('addons.Meerkat::actions.not_spam_desc') }}\"><span class=\"icon icon-shield\"></span> {{ translate('addons.Meerkat::actions.not_spam') }}</a></li>\n    <li v-if=\"item['spam'] === true && item['is_markingnotspam'] == true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.spam_submitting') }}</a></li>\n\n    <li v-if=\"item['is_taking_action'] == false\"><a href=\"#\" @click.prevent=\"call('deleteItem', item)\" title=\"{{ translate('addons.Meerkat::actions.delete_desc') }}\"><span class=\"icon icon-trash\"></span> {{ translate('addons.Meerkat::actions.delete') }}</a></li>\n    <li v-if=\"item['is_deleting'] === true\"><a href=\"#\"><span class=\"icon icon-circular-graph animation-spin\"></span> {{ translate('addons.Meerkat::actions.delete_removing') }}</a></li>\n");
 
 },{}]},{},[1]);
 
@@ -1186,13 +1186,10 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 var dataMessage = '<ul>';
                 var allErrors = [];
 
-                console.log(data);
 
                 for (var errorBucket in data) {
                     if (data.hasOwnProperty(errorBucket)) {
                         if (errorBucket.length > 0) {
-                            console.log('checking error bucket', errorBucket);
-                            console.log('inner buc', data[errorBucket]);
                             for (var i = 0; i < data[errorBucket].length; i += 1) {
                                 allErrors.push(data[errorBucket][i]);
                             }
@@ -1304,7 +1301,7 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
 
                 item.saving = false;
 
-                if (typeof e.data !== 'undefined' && typeof e.data.errors !== undefined && e.data.errors.length > 0) {
+                if (typeof e.data !== 'undefined' && typeof e.data.errors !== undefined) {
                     this.raiseError(title, validationError, e.data.errors);
                 } else {    
                     this.raiseError(title, genericError);
@@ -1565,7 +1562,7 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 item.is_markingspam = true;
 
                 self.$http.post(self.ajax.spam, {ids: [id]}, function (data) {
-                    if (data.success) {
+                    if (data.comment_saved) {
                         self.$parent.flashError = false;
                         self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.spam_success', data.marked.length);
                         _.each(data.marked, function (markedAsSpam) {
@@ -1577,17 +1574,47 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                         self.refreshCounts();
                         item.is_taking_action = false;
                         item.is_markingspam = false;
+                        item.spam = true;
+
+                        if (data.specimen_sent == true && data.submit_success == false) {
+                            var sampleErrors = {};
+                            var title = translate('addons.Meerkat::errors.comments_mark_spam');
+                            var errorMessages = data.errorMessage;
+                            errorMessages.unshift(translate('addons.Meerkat::errors.guard_comment_saved_error'));
+                            sampleErrors['spam'] = errorMessages;
+                            self.raiseError(title, translate('addons.Meerkat::errors.guard_comment_saved_error'), sampleErrors);
+                        }
                     } else {
+
                         item.is_taking_action = false;
                         item.is_markingspam = false;
                         self.$parent.flashSuccess = false;
                         self.$parent.flashError = translate_choice('addons.Meerkat::actions.spam_failed', data.marked.length);
+
+                        if (data.specimen_sent && data.submit_success == false) {
+                            var multipleErrors = translate('addons.Meerkat::errors.guard_multiple_spam_submit_errors');
+                            var sampleErrors = {};
+                            var title = translate('addons.Meerkat::errors.comments_mark_spam');
+                            var errorMessages = data.errorMessage;
+                            errorMessages.unshift(multipleErrors);
+                            sampleErrors['spam'] = errorMessages;
+
+                            self.raiseError(title, multipleErrors, sampleErrors);
+                        } else {
+                            item.is_taking_action = false;
+                            item.is_markingspam = false;
+
+                            var title = translate('addons.Meerkat::errors.comments_mark_spam');
+                            var genericError = translate('addons.Meerkat::errors.comments_mark_spam_desc');
+                            this.raiseError(title, genericError);
+                        }
                     }
                 }).catch(function (e) {
-                    var title = translate('addons.Meerkat::errors.comments_mark_spam');
-                    var genericError = translate('addons.Meerkat::errors.comments_mark_spam_desc');
                     item.is_taking_action = false;
                     item.is_markingspam = false;
+
+                    var title = translate('addons.Meerkat::errors.comments_mark_spam');
+                    var genericError = translate('addons.Meerkat::errors.comments_mark_spam_desc');
                     this.raiseError(title, genericError);
                 });
             });
@@ -1649,7 +1676,7 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 item.is_markingnotspam = true;
 
                 self.$http.post(self.ajax.notspam, {ids: [id]}, function (data) {
-                    if (data.success) {
+                    if (data.comment_saved) {
                         self.$parent.flashError = false;
                         self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.not_spam_success', data.marked.length);
                         _.each(data.marked, function (markedAsNotSpam) {
@@ -1660,12 +1687,41 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                         });
                         item.is_taking_action = false;
                         item.is_markingnotspam = false;
+                        item.spam = false;
                         self.refreshCounts();
+
+
+                        if (data.specimen_sent == true && data.submit_success == false) {
+                            var sampleErrors = {};
+                            var title = translate('addons.Meerkat::errors.comments_mark_not_spam');
+                            var errorMessages = data.errorMessage;
+                            errorMessages.unshift(translate('addons.Meerkat::errors.guard_comment_ham_saved_error'));
+                            sampleErrors['spam'] = errorMessages;
+                            self.raiseError(title, translate('addons.Meerkat::errors.guard_comment_ham_saved_error'), sampleErrors);
+                        }
                     } else {
                         self.$parent.flashSuccess = false;
                         item.is_taking_action = false;
                         item.is_markingnotspam = false;
                         self.$parent.flashError = translate_choice('addons.Meerkat::actions.not_spam_failed', data.marked.length);
+
+                        if (data.specimen_sent && data.submit_success == false) {
+                            var multipleErrors = translate('addons.Meerkat::errors.guard_multiple_ham_submit_errors');
+                            var sampleErrors = {};
+                            var title = translate('addons.Meerkat::errors.comments_mark_not_spam');
+                            var errorMessages = data.errorMessage;
+                            errorMessages.unshift(multipleErrors);
+                            sampleErrors['spam'] = errorMessages;
+
+                            self.raiseError(title, multipleErrors, sampleErrors);
+                        } else {
+                            item.is_taking_action = false;
+                            item.is_markingspam = false;
+
+                            var title = translate('addons.Meerkat::errors.comments_mark_not_spam');
+                            var genericError = translate('addons.Meerkat::errors.comments_mark_not_spam_desc');
+                            this.raiseError(title, genericError);
+                        }
                     }
                 }).catch(function (e) {
                     var title = translate('addons.Meerkat::errors.comments_mark_not_spam');

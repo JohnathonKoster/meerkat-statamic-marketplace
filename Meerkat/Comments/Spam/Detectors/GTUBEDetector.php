@@ -8,6 +8,40 @@ use Statamic\Addons\Meerkat\Contracts\Comments\Spam\SpamDetector;
 class GTUBEDetector implements SpamDetector
 {
 
+    protected $success = true;
+
+    protected $errorMessage = '';
+
+    /**
+     * Gets the name of the spam detector.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return 'GTUBEDetector';
+    }
+
+    /**
+     * Gets a value indicating if the detector succeeded.
+     *
+     * @return boolean
+     */
+    public function wasSuccess()
+    {
+        return $this->success;
+    }
+
+    /**
+     * Gets an error message string, if available.
+     *
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
     public function submitSpam($data)
     {
         return;

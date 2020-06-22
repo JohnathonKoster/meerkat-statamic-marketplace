@@ -3,6 +3,7 @@
 namespace Statamic\Addons\Meerkat;
 
 use Statamic\Addons\Meerkat\Comments\Metrics\CommentMetrics;
+use Statamic\Addons\Meerkat\Comments\Spam\Guard;
 use Statamic\API\Str;
 use Statamic\API\Data;
 use Statamic\API\Crypt;
@@ -116,20 +117,38 @@ class MeerkatController extends Controller
     {
         $comments = Helper::ensureArray(Input::get('ids', []));
 
-        $errorMessage = null;
+        $wasSaved = false;
+        $wasSuccess = true;
+        $didSend = false;
+        $errors = [];
 
         try {
-            $manager->markCommentsAsSpam($comments);
-            $markSucceeded = true;
+            $result = $manager->markCommentsAsSpam($comments);
+
+            if ($result['wasSuccess'] === false) {
+                $wasSuccess = false;
+            }
+
+            if ($result['wasSaved']) {
+                $wasSaved = true;
+            }
+
+            if ($result['didSend']) {
+                $didSend = true;
+            }
+
+            $errors = array_merge($errors, $result['errors']);
+
         } catch (\Exception $e) {
-            $markSucceeded = false;
-            $errorMessage = $e->getMessage();
+            $errors[] = $e->getMessage();
         }
 
         return [
-            'success' => $markSucceeded,
+            'comment_saved' => $wasSaved,
+            'submit_success' => $wasSuccess,
+            'specimen_sent' => $didSend,
             'marked' => $comments,
-            'errorMessage' => $errorMessage
+            'errorMessage' => $errors
         ];
     }
 
@@ -143,20 +162,38 @@ class MeerkatController extends Controller
     {
         $comments = Helper::ensureArray(Input::get('ids', []));
 
-        $errorMessage = null;
+        $wasSaved = false;
+        $wasSuccess = true;
+        $didSend = false;
+        $errors = [];
 
         try {
-            $manager->markCommentsAsNotSpam($comments);
-            $markSucceeded = true;
+            $result = $manager->markCommentsAsNotSpam($comments);
+
+            if ($result['wasSuccess'] === false) {
+                $wasSuccess = false;
+            }
+
+            if ($result['wasSaved']) {
+                $wasSaved = true;
+            }
+
+            if ($result['didSend']) {
+                $didSend = true;
+            }
+
+            $errors = array_merge($errors, $result['errors']);
+
         } catch (\Exception $e) {
-            $markSucceeded = false;
-            $errorMessage = $e->getMessage();
+            $errors = $e->getMessage();
         }
 
         return [
-            'success' => $markSucceeded,
+            'comment_saved' => $wasSaved,
+            'submit_success' => $wasSuccess,
+            'specimen_sent' => $didSend,
             'marked' => $comments,
-            'errorMessage' => $errorMessage
+            'errorMessage' => $errors
         ];
     }
 

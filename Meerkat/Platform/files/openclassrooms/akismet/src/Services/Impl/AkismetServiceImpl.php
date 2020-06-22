@@ -43,7 +43,7 @@ class AkismetServiceImpl implements AkismetService
      */
     public function submitSpam(Comment $comment)
     {
-        $this->apiClient->post(self::SUBMIT_SPAM, $comment->toArray());
+        return $this->apiClient->post(self::SUBMIT_SPAM, $comment->toArray());
     }
 
     /**
@@ -51,6 +51,6 @@ class AkismetServiceImpl implements AkismetService
      */
     public function submitHam(Comment $comment)
     {
-        $this->apiClient->post(self::SUBMIT_HAM, $comment->toArray());
+        return $this->apiClient->post(self::SUBMIT_HAM, $comment->toArray());
     }
 }

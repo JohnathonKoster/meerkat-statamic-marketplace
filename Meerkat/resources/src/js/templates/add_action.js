@@ -17,5 +17,4 @@ Meerkat.setMeerkatAddActionPartialTemplate(`
 
     <li v-if="item['is_taking_action'] == false"><a href="#" @click.prevent="call('deleteItem', item)" title="{{ translate('addons.Meerkat::actions.delete_desc') }}"><span class="icon icon-trash"></span> {{ translate('addons.Meerkat::actions.delete') }}</a></li>
     <li v-if="item['is_deleting'] === true"><a href="#"><span class="icon icon-circular-graph animation-spin"></span> {{ translate('addons.Meerkat::actions.delete_removing') }}</a></li>
-
 `);

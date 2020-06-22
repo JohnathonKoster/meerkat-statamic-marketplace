@@ -49,4 +49,9 @@ return [
     'license_no_license' => 'Meerkat: In order to use all of Meerkat\'s features on a public site, you must enter a license.',
     'license_incorrect_domain' => 'Meerkat: It appears that the current domain has not been configured for use with this license. Please update your account details.',
 
+    'guard_service_error' => 'A third-party service error occurred.',
+    'guard_comment_saved_error' => 'Your comment was saved as spam, but an error occurred when communicating with the third-party providers.',
+    'guard_comment_ham_saved_error' => 'Your comment was saved as ham, but an error occurred when communicating with the third-party providers.',
+    'guard_multiple_spam_submit_errors' => 'Multiple errors occurred when marking the comment as spam; the comment was not updated.',
+    'guard_multiple_ham_submit_errors' => 'Multiple errors occurred when marking the comment as ham; the comment was not updated.',
 ];

@@ -30,6 +30,40 @@ class AkismetDetector implements SpamDetector
      */
     protected $factory;
 
+    protected $success = false;
+
+    protected $errorMessage = '';
+
+    /**
+     * Gets the name of the spam detector.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return 'Akismet';
+    }
+
+    /**
+     * Gets a value indicating if the detector succeeded.
+     *
+     * @return boolean
+     */
+    public function wasSuccess()
+    {
+        return $this->success;
+    }
+
+    /**
+     * Gets an error message string, if available.
+     *
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
     public function __construct($apiKey, $frontPage)
     {
         $this->addon_name = 'Meerkat';
@@ -48,10 +82,19 @@ class AkismetDetector implements SpamDetector
     public function submitSpam($data)
     {
         try {
-            $this->akismet->submitSpam($this->makeComment($data));
+            $result = $this->akismet->submitSpam($this->makeComment($data));
+
+            if ($result === "Thanks for making the web a better place.") {
+                $this->success = true;
+            } else {
+                $this->success = false;
+                $this->errorMessage = $this->trans('errors.guard_service_error');
+            }
         } catch (\Exception $e) {
-            $this->errors[] = $e;
-        }
+           $this->errors[] = $e;
+           $this->success = false;
+           $this->errorMessage = $e->getMessage();
+       }
     }
 
     /**
@@ -64,9 +107,18 @@ class AkismetDetector implements SpamDetector
     public function submitHam($data)
     {
         try {
-            $this->akismet->submitHam($this->makeComment($data));
+            $result = $this->akismet->submitHam($this->makeComment($data));
+
+            if ($result === "Thanks for making the web a better place.") {
+                $this->success = true;
+            } else {
+                $this->success = false;
+                $this->errorMessage = $this->trans('errors.guard_service_error');
+            }
         } catch (\Exception $e) {
             $this->errors[] = $e;
+            $this->success = false;
+            $this->errorMessage = $e->getMessage();
         }
     }
 
@@ -127,6 +179,7 @@ class AkismetDetector implements SpamDetector
             return $this->akismet->commentCheck($this->makeComment($data));
         } catch (\Exception $e) {
             $this->errors[] = $e;
+            $this->errorMessage = $e->getMessage();
         }
 
         return $spamOnFailure;

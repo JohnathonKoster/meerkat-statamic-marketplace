@@ -96,18 +96,44 @@ class Guard
 
     public function submitSpam($data)
     {
+        $wasSuccess = true;
+        $errors = [];
+
         /** @var SpamDetector $detector */
         foreach ($this->spamDetectors as $detector) {
             $detector->submitSpam($data);
+
+            if ($detector->wasSuccess() === false) {
+                $wasSuccess = false;
+                $errors[] = $detector->getName() .': '.$detector->getErrorMessage();
+            }
         }
+
+        return [
+            'wasSuccess' => $wasSuccess,
+            'errors' => $errors
+        ];
     }
 
     public function submitHam($data)
     {
+        $wasSuccess = true;
+        $errors = [];
+
         /** @var SpamDetector $detector */
         foreach ($this->spamDetectors as $detector) {
             $detector->submitHam($data);
+
+            if ($detector->wasSuccess() === false) {
+                $wasSuccess = false;
+                $errors[] = $detector->getName() .': '.$detector->getErrorMessage();
+            }
         }
+
+        return [
+            'wasSuccess' => $wasSuccess,
+            'errors' => $errors
+        ];
     }
 
 }
