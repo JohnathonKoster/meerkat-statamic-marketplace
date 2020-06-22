@@ -1,4 +1,4 @@
-1.5.?
+1.5.70
 - FIX: Corrects an issue preventing comments from being correctly saved
 - FIX: Corrects a bug that prevented error messages from being displayed
 - NEW: Adds a `errors.error_in` translation string that is used when reporting errors on the Control Panel
@@ -10,6 +10,9 @@
     - Control Panel error messages provide more details
     - Comment Actions visible by default (increased opacity)
     - New UI that displays ongoing comment action
+    - Expands Spam Guard CP error reporting (Guard contract expanded)
+    - Third-party Guard service failures no longer block save operations
+    - CP error messages will correctly reflect Guard operation results
 
 1.5.64
 - Adds the `getPublishedCommentCount` helper function the Meerkat API to easily get the total number of replies, including replies for a comment stream.
