@@ -1,4 +1,4 @@
-1.5.71
+1.5.72
 - FIX: Corrects the behavior of recursive comments
   For best results, please wrap the recursive call in the parent element (`ul` in this case):
 ```html
@@ -22,6 +22,9 @@
 
 	{{ /meerkat:responses }}
 ```
+
+1.5.71
+- IMPROVE: Removes unused findWhere
 
 1.5.70
 - FIX: Corrects an issue preventing comments from being correctly saved
