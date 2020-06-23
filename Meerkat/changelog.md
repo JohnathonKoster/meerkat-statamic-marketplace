@@ -1,3 +1,28 @@
+1.5.71
+- FIX: Corrects the behavior of recursive comments
+  For best results, please wrap the recursive call in the parent element (`ul` in this case):
+```html
+	{{ meerkat:responses as="replies" }}
+
+		<ul>
+			{{ replies }}
+			<li>
+				{{ id }} - {{ comment }}
+
+
+				{{ if has_replies }}
+
+				<ul>{{ *recursive replies* }}</ul>
+
+				{{ /if }}
+			</li>
+
+			{{ /replies }}
+		</ul>
+
+	{{ /meerkat:responses }}
+```
+
 1.5.70
 - FIX: Corrects an issue preventing comments from being correctly saved
 - FIX: Corrects a bug that prevented error messages from being displayed

@@ -14,6 +14,7 @@ use Statamic\Addons\Meerkat\Comments\Manager;
 use Statamic\Addons\Collection\CollectionTags;
 use Statamic\Addons\Meerkat\Comments\CommentCollection;
 use Statamic\Addons\Meerkat\Helpers\CollectionTagHelpers;
+use Statamic\View\Antlers\Template;
 
 class MeerkatTags extends CollectionTags
 {
@@ -161,13 +162,13 @@ class MeerkatTags extends CollectionTags
         }
 
         $designerMode = $this->getConfigBool('designer_mode', false);
-        // $designerMode = false;
 
         if (!$designerMode) {
             $this->collection = $stream->getComments();
         } else {
             $this->collection = $stream->getDesignerModeComments();
         }
+
 
         $this->filterResponses();
 
@@ -304,25 +305,26 @@ class MeerkatTags extends CollectionTags
             } else {
                 // Not paginated, but we can still nest inside a scope key if they have specified to.
                 if ($as) {
-                    $data = [
+                    $data =
                         array_merge(
                             [$as => $this->collection->setRecursiveCommentKey($as)->toArray(true)],
                             $this->getCollectionMetaData()
-                        )
-                    ];
+                        );
+
+                    return $this->parseComments($data, [], $as);
                 } else {
                     // Add the meta data (total_results, etc) into each iteration.
                     $meta = $this->getCollectionMetaData();
                     $data = collect($this->collection->toArray(true))->map(function ($item) use ($meta) {
                         return array_merge($item, $meta);
                     })->all();
-                }
 
-                return $this->parseLoop($data);
+
+                    return $this->parseLoop($data, false, []);
+                }
             }
         }
     }
-
     protected function filterResponses($limit = true)
     {
         $this->filterReplies();

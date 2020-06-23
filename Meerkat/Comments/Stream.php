@@ -386,16 +386,21 @@ class Stream implements Countable
 
     private $retrievalErrors = [];
 
+    protected function collectComments($value = [])
+    {
+        return new \Statamic\Addons\Meerkat\Comments\CommentCollection($value);
+    }
+
     private function getCommentsFromDirectories($directories, $flatList = false)
     {
         if (count($directories) == 0) {
-            $this->comments = collect_comments();
+            $this->comments = $this->collectComments();
             return $this->comments;
         }
 
         $form = MeerkatAPI::getForm();
 
-        $comments = collect_comments($directories)->map(function ($directory) {
+        $comments = $this->collectComments($directories)->map(function ($directory) {
             $commentPath = $directory . '/comment.md';
 
             $data = [];

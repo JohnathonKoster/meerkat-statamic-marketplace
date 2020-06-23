@@ -73,6 +73,11 @@ class Manager
         
     }
 
+    protected  function collectStreams($value = [])
+    {
+        return new \Statamic\Addons\Meerkat\Comments\StreamCollection($value);
+    }
+
     /**
      * Get the valid comment streams.
      *
@@ -80,7 +85,7 @@ class Manager
      */
     public function getStreams($streamFilter = [])
     {
-        $streams = collect_streams($this->getDisk()->filesystem()
+        $streams = $this->collectStreams($this->getDisk()->filesystem()
             ->directories('/comments/'))
             ->filter(function ($dir) {
                 return count($this->getDisk()->filesystem()->directories($dir)) >= 1;
@@ -118,7 +123,7 @@ class Manager
      */
     public function allComments($flatList = false)
     {
-        $comments = collect_comments();
+        $comments = $this->collectComments();
 
         $this->getStreams()->each(function (Stream $stream) use (&$comments, $flatList) {
             $stream->getComments($flatList)->each(function (Comment $comment) use (&$comments) {
@@ -131,7 +136,7 @@ class Manager
 
     public function getStreamComments($stream, $flatList = false)
     {
-        $comments = collect_comments();
+        $comments = $this->collectComments();
 
         $this->getStreams([$stream])->each(function (Stream $stream) use (&$comments, $flatList) {
             $stream->getComments($flatList)->each(function (Comment $comment) use (&$comments) {
@@ -140,6 +145,11 @@ class Manager
         });
 
         return $comments;
+    }
+
+    protected function collectComments($value = [])
+    {
+        return new \Statamic\Addons\Meerkat\Comments\CommentCollection($value);
     }
 
     /**

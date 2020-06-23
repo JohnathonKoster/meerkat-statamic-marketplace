@@ -42,9 +42,14 @@ class Form extends StatamicForm
         $this->limitSubmissionsToContext = $limitTo;
     }
 
+    protected function collectComments($value = [])
+    {
+        return new \Statamic\Addons\Meerkat\Comments\CommentCollection($value);
+    }
+
     public function submissions()
     {
-        $submissions = collect_comments();
+        $submissions = $this->collectComments();
 
         /** @var Manager $manager */
         $manager = app(Manager::class);

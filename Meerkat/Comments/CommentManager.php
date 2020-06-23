@@ -62,7 +62,12 @@ class CommentManager
 
         $this->findComments($commentIDs, $this->streamManager->allComments(), $discoveredComments);
 
-        return collect_comments($discoveredComments);
+        return $this->collectComments($discoveredComments);
+    }
+
+    protected function collectComments($value = [])
+    {
+        return new \Statamic\Addons\Meerkat\Comments\CommentCollection($value);
     }
 
     /**
