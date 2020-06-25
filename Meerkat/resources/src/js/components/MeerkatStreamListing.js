@@ -497,11 +497,11 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             }
         },
 
-        editComment: function (id) {
+        editComment: function (item) {
             item.editing = true;
         },
 
-        replyToComment: function (id) {
+        replyToComment: function (item) {
             item.writing_reply = true;
         },
         raiseError: function (messageTitle, fallbackMessage, data) {
@@ -638,19 +638,19 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             this.items.splice(index, 1);
         },
 
-        changeItemToApprove: function (id) {
+        changeItemToApprove: function (item) {
             item.published = true;
         },
 
-        changeItemToUnApproved: function (id) {
+        changeItemToUnApproved: function (item) {
             item.published = false;
         },
 
-        changeItemToIsSpam: function (id) {
+        changeItemToIsSpam: function (item) {
             item.spam = true;
         },
 
-        changeItemToNotSpam: function (id) {
+        changeItemToNotSpam: function (item) {
             item.spam = false;
         },
 
@@ -737,23 +737,27 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             item.is_taking_action = true;
 
             self.$http.post(self.ajax.approve, {ids: [item.id]}, function (data) {
-                if (data.success) {
+                if (data.success === true) {
+
+                    item.is_approving = false;
+                    item.is_taking_action = false;
+
                     self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.approve_success', data.approved.length);
                     _.each(data.approved, function (approvedId) {
-                        self.changeItemToApprove(approvedId);
+                        var _tItem = _.findWhere(self.items, {id: approvedId});
+
+                        self.changeItemToApprove(_tItem);
                         self.metrics.approved++;
                         self.metrics.pending--;
                         self.instanceChanges.commentApprovals.push(approvedId);
                     });
                     self.refreshCounts();
-                    item.is_approving = false;
-                    item.is_taking_action = false;
+
                 } else {
                     self.$parent.flashSuccess = false;
                     self.$parent.flashError = translate_choice('addons.Meerkat::actions.approve_failed', data.approved.length) + data.errorMessage;
                     item.is_approving = false;
                     item.is_taking_action = false;
-
                 }
             }).catch(function (e) {
                 var title = translate('addons.Meerkat::errors.comments_approve');
@@ -772,7 +776,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                 if (data.success) {
                     self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.approve_success', data.approved.length);
                     _.each(data.approved, function (approvedId) {
-                        self.changeItemToApprove(approvedId);
+                        var _tItem = _.findWhere(self.items, {id: approvedId});
+
+                        self.changeItemToApprove(_tItem);
                         self.metrics.approved++;
                         self.metrics.pending--;
                         self.instanceChanges.commentApprovals.push(approvedId);
@@ -806,7 +812,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                     self.$parent.flashError = false;
                     self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.unapprove_success', data.unapproved.length);
                     _.each(data.unapproved, function (unApprovedId) {
-                        self.changeItemToUnApproved(unApprovedId);
+                        var _tItem = _.findWhere(self.items, {id: unApprovedId});
+
+                        self.changeItemToUnApproved(_tItem);
                         self.metrics.approved--;
                         self.metrics.pending++;
                         self.instanceChanges.commentUnApprovals.push(unApprovedId);
@@ -843,7 +851,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                     self.$parent.flashError = false;
                     self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.unapprove_success', data.unapproved.length);
                     _.each(data.unapproved, function (unApprovedId) {
-                        self.changeItemToUnApproved(unApprovedId);
+                        var _tItem = _.findWhere(self.items, {id: unApprovedId});
+
+                        self.changeItemToUnApproved(_tItem);
                         self.metrics.approved--;
                         self.metrics.pending++;
                         self.instanceChanges.commentUnApprovals.push(unApprovedId);
@@ -885,7 +895,9 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                         self.$parent.flashError = false;
                         self.$parent.flashSuccess = translate_choice('addons.Meerkat::actions.spam_success', data.marked.length);
                         _.each(data.marked, function (markedAsSpam) {
-                            self.changeItemToIsSpam(markedAsSpam);
+                            var _tItem = _.findWhere(self.items, {id: markedAsSpam});
+
+                            self.changeItemToIsSpam(_tItem);
                             self.metrics.spam++;
                             self.metrics.approved--;
                             self.instanceChanges.commentMarkedAsSpam.push(markedAsSpam);

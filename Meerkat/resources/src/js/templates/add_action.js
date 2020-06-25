@@ -6,8 +6,8 @@ Meerkat.setMeerkatAddActionPartialTemplate(`
     <li v-if="item['published'] === true && item['is_unapproving'] === true"><a href="#"><span class="icon icon-circular-graph animation-spin"></span> {{ translate('addons.Meerkat::actions.unapproving') }}</a></li>
     
     
-    <li v-if="item['is_taking_action'] == false"><a href="#" @click.prevent="call('replyToComment', item.id)" title="{{ translate('addons.Meerkat::actions.reply_desc') }}"><span class="icon icon-reply"></span> {{ translate('addons.Meerkat::actions.reply') }}</a></li>
-    <li v-if="item['is_taking_action'] == false"><a href="#" @click.prevent="call('editComment', item.id)" title="{{ translate('addons.Meerkat::actions.edit_desc') }}"><span class="icon icon-edit"></span> {{ translate('addons.Meerkat::actions.edit') }}</a></li>
+    <li v-if="item['is_taking_action'] == false"><a href="#" @click.prevent="call('replyToComment', item)" title="{{ translate('addons.Meerkat::actions.reply_desc') }}"><span class="icon icon-reply"></span> {{ translate('addons.Meerkat::actions.reply') }}</a></li>
+    <li v-if="item['is_taking_action'] == false"><a href="#" @click.prevent="call('editComment', item)" title="{{ translate('addons.Meerkat::actions.edit_desc') }}"><span class="icon icon-edit"></span> {{ translate('addons.Meerkat::actions.edit') }}</a></li>
 
     <li v-if="item['spam'] === false && item['is_taking_action'] == false"><a href="#" @click.prevent="call('markItemAsSpam', item)" title="{{ translate('addons.Meerkat::actions.spam_desc') }}"><span class="icon icon-shield"></span> {{ translate('addons.Meerkat::actions.spam') }}</a></li>
     <li v-if="item['spam'] === false && item['is_markingspam'] == true"><a href="#"><span class="icon icon-circular-graph animation-spin"></span> {{ translate('addons.Meerkat::actions.spam_submitting') }}</a></li>

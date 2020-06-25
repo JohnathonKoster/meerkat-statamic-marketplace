@@ -1,26 +1,31 @@
+1.5.73
+- FIX: Multiple issues preventing CP actions from completing, or correctly display messages or current state
+- FIX: Corrects an overly-aggressive validation check that prevent replies from being detected correctly
+
 1.5.72
 - FIX: Corrects the behavior of recursive comments
   For best results, please wrap the recursive call in the parent element (`ul` in this case):
+  
 ```html
-	{{ meerkat:responses as="replies" }}
+{{ meerkat:responses as="replies" }}
 
-		<ul>
-			{{ replies }}
-			<li>
-				{{ id }} - {{ comment }}
+    <ul>
+        {{ replies }}
+        <li>
+            {{ id }} - {{ comment }}
 
 
-				{{ if has_replies }}
+            {{ if has_replies }}
 
-				<ul>{{ *recursive replies* }}</ul>
+            <ul>{{ *recursive replies* }}</ul>
 
-				{{ /if }}
-			</li>
+            {{ /if }}
+        </li>
 
-			{{ /replies }}
-		</ul>
+        {{ /replies }}
+    </ul>
 
-	{{ /meerkat:responses }}
+{{ /meerkat:responses }}
 ```
 
 1.5.71

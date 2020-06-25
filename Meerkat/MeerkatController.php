@@ -410,8 +410,8 @@ class MeerkatController extends Controller
 
         $context = '';
 
-        if (isset($fields['ids']) && is_array($fields['ids']) && count($fields['ids']) > 0) {
-            if (is_array($fields['ids'])) {
+        if (isset($fields['ids'])) {
+            if (is_array($fields['ids']) && count($fields['ids']) > 0) {
                 $replyingTo = $fields['ids'][0];
             } else {
                 $replyingTo = $fields['ids'];
