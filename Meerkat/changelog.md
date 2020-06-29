@@ -1,3 +1,6 @@
+1.5.74
+- Improves compatibility between Recaptcha addon and Meerkat Replies through `replies-to`
+
 1.5.73
 - FIX: Multiple issues preventing CP actions from completing, or correctly display messages or current state
 - FIX: Corrects an overly-aggressive validation check that prevent replies from being detected correctly

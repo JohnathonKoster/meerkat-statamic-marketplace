@@ -40,8 +40,8 @@ return [
 
     'license' => 'Meerkat License',
     'license_key' => 'Meerkat License',
-    
+
     'license_instruct' => 'In order to use Meerkat on a public website, you must enter a valid license.',
-    'license_key_instruct' => 'Enter the license key for this domain from your <a href="https://bag.stillat.com/licenses" target="_blank">Stillat Account</a>.',
+    'license_key_instruct' => 'Enter the license key for this domain from your <a href="https://statamic.com/marketplace/addons/meerkat" target="_blank">Statamic Account</a>.',
     'license_submit' => 'Save License',
 ];

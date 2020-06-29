@@ -1,7 +1,7 @@
 name: Meerkat
-version: "1.5.73"
+version: "1.5.74"
 description: A streamlined and beautiful comment system for your Statamic site.
-url: https://stillat.com/projects/meerkat
+url: https://stillat.com/meerkat
 developer: Johnathon Koster
-developer_url: https://stillat.com
-commercial: false
+developer_url: https://stillat.com/meerkat
+commercial: true

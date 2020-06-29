@@ -42,6 +42,6 @@ return [
     'license_key' => 'Clef de licence Meerkat',
 
     'license_instruct' => 'Afin de pouvoir utiliser Meerkat sur un site public, vous devez saisir une clef de licence.',
-    'license_key_instruct' => 'Saisissez la clef de licence pour ce domaine sur votre <a href="https://bag.stillat.com/licenses" target="_blank">compte Stillat</a>.',
+    'license_key_instruct' => 'Saisissez la clef de licence pour ce domaine sur votre <a href="https://statamic.com/marketplace/addons/meerkat" target="_blank">compte Statamic</a>.',
     'license_submit' => 'Enregistrer la licence',
 ];
