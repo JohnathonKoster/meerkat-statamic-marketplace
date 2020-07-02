@@ -33,8 +33,6 @@ class MeerkatListener extends Listener
         'Meerkat.registeringAvatarDrivers' => 'registerDefaultDrivers',
         'Meerkat.comment.creating' => 'commentCreated',
         'Meerkat.guard.starting' => 'loadSpamDetectors',
-
-        // 'Meerkat.permissions.resolving' => 'resolvingMeerkatPermissions',
     ];
 
     public function __construct(AccessManager $accessManager)
@@ -43,13 +41,6 @@ class MeerkatListener extends Listener
         $this->addon_name = 'Meerkat';
 
         $this->accessManager = $accessManager;
-    }
-
-    public function resolvingMeerkatPermissions($user, $permissionSet)
-    {
-        $permissionSet->canViewComments = true;
-
-        return $permissionSet;
     }
 
     public function loadSpamDetectors(Guard $guard)
