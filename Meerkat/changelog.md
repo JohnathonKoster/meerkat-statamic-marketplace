@@ -1,5 +1,5 @@
 1.5.8
-- Allows for greater control over user permissions in the Control Panel
+- Allows for greater control over user permissions in the Control Panel. See https://stillat.com/meerkat/docs/permissions for more details.
 - Improves overall Meerkat security though improved access control
 - IMPROVE: Removes internal use of Meerkat helpers.php file in favor of instance methods:
    - Reduces global function pollution
