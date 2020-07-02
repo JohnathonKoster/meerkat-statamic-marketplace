@@ -28,6 +28,15 @@ trait ExportRoutes
 
     public function getExport()
     {
+        if (!$this->accessManager->canReportAsSpam()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $exportType = Input::get('type', 'csv');
 
         if (! array_key_exists($exportType, $this->mapping)) {

@@ -2,13 +2,13 @@
 
 namespace Statamic\Addons\Meerkat\Comments;
 
+use Statamic\API\Config;
 use Illuminate\Support\Str;
 use Statamic\Addons\Meerkat\Markdown\Parser;
 use Statamic\Addons\Meerkat\Helpers\Str as MeerkatStr;
 
 class Factory
 {
-
     /**
      * Smartly converts a Comment index into an array.
      *
@@ -33,7 +33,7 @@ class Factory
             $data['url'] = false;
         }
 
-        $currentLocale = meerkat_get_config('cp.locale', 'en');
+        $currentLocale = Config::get('cp.locale', 'en');
 
         $data['user_ip'] = $comment->get('ip');
         $data['published'] = $comment->published();
@@ -44,7 +44,7 @@ class Factory
         $data['in_response_to'] = $context->get('title');
         $data['in_response_to_url'] = $context->url();
         $data['in_response_to_edit_url'] = $context->editUrl();
-        $data['in_response_string'] = meerkat_trans('comments.in_response_to', [
+        $data['in_response_string'] = translate('addons.Meerkat::comments.in_response_to', [
             'article' => '<a href="' . $data['in_response_to_edit_url'] . '" title="' . $data['in_response_to'] . '">' . Str::limit($data['in_response_to'], 55) . '</a>',
             'date' => $data['datestring']
         ], 'messages', $currentLocale);
@@ -55,9 +55,9 @@ class Factory
         $data['parent_comment_id'] = $comment->getParentID();
         $data['original_markdown'] = $comment->getOriginalMarkdown();
 
-        if ($comment->isReply()) {
-            $data['in_reply_to_string'] = meerkat_trans('comments.in_reply_to', [
-                'author' => '<a href="#meerkat-comment-' . $comment->getParentID() . '" title="' . meerkat_trans('actions.jump_to_author_post', [], 'messages', $currentLocale) . '">' . $comment->getParent()->get('name') . '</a>'
+        if ($comment->isReply() && $comment->getParent() !== null) {
+            $data['in_reply_to_string'] = translate('addons.Meerkat::comments.in_reply_to', [
+                'author' => '<a href="#meerkat-comment-' . $comment->getParentID() . '" title="' .translate('addons.Meerkat::actions.jump_to_author_post', [], 'messages', $currentLocale) . '">' . $comment->getParent()->get('name') . '</a>'
             ], 'messages', $currentLocale);
             $data['parent_comment_name'] = $comment->getParent()->get('name');
         } else {

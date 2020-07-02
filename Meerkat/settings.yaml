@@ -1,10 +1,4 @@
 fields:
-  license:
-    type: section
-    width: 100
-  license_key:
-    type: text
-    width: 100
   publishing:
     type: section
     width: 100

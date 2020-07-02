@@ -8,13 +8,11 @@ use Statamic\API\Parse;
 use Statamic\API\Crypt;
 use Statamic\Data\DataCollection;
 use Statamic\Addons\Meerkat\UI\Gravatar;
-use Statamic\Addons\Meerkat\SettingsPatcher;
 use Statamic\Addons\Meerkat\Comments\Stream;
 use Statamic\Addons\Meerkat\Comments\Manager;
 use Statamic\Addons\Collection\CollectionTags;
 use Statamic\Addons\Meerkat\Comments\CommentCollection;
 use Statamic\Addons\Meerkat\Helpers\CollectionTagHelpers;
-use Statamic\View\Antlers\Template;
 
 class MeerkatTags extends CollectionTags
 {

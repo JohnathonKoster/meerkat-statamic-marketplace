@@ -2,10 +2,10 @@
 
 namespace Statamic\Addons\Meerkat;
 
+use Statamic\API\User;
+use Statamic\Addons\Meerkat\Permissions\AccessManager;
 use Statamic\Extend\Extensible;
 use Statamic\Extend\ServiceProvider;
-use Illuminate\Contracts\Http\Kernel;
-use Statamic\Addons\Meerkat\SettingsPatcher;
 use Statamic\Addons\Meerkat\Comments\Manager;
 use Statamic\Addons\Meerkat\Comments\Spam\Guard;
 use Statamic\Addons\Meerkat\Extend\AvatarLoader;

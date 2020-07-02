@@ -3,10 +3,11 @@
 namespace Statamic\Addons\Meerkat;
 
 use Statamic\Addons\Meerkat\Comments\Metrics\CommentMetrics;
-use Statamic\Addons\Meerkat\Comments\Spam\Guard;
+use Statamic\Addons\Meerkat\Permissions\AccessManager;
 use Statamic\API\Str;
 use Statamic\API\Data;
 use Statamic\API\Crypt;
+use Statamic\API\User;
 use Statamic\API\Helper;
 use Statamic\API\Content;
 use Statamic\API\Request;
@@ -24,14 +25,13 @@ use Statamic\Addons\Meerkat\Comments\Manager;
 use Statamic\Addons\Meerkat\Routes\APIRoutes;
 use Statamic\Addons\Meerkat\Comments\Comment;
 use Statamic\Extend\Contextual\ContextualFlash;
-use Statamic\Addons\Meerkat\Core\LicenseUpdater;
 use Statamic\Addons\Meerkat\Routes\ExportRoutes;
 use Statamic\Addons\Meerkat\Routes\ProtectsRoutes;
 use Statamic\Addons\Meerkat\Comments\CommentManager;
 
 class MeerkatController extends Controller
 {
-    use Extensible, APIRoutes, ExportRoutes, ProtectsRoutes;
+    use Extensible, APIRoutes, ExportRoutes, ProtectsRoutes, MeerkatHelpers;
 
     protected $streamManager;
     protected $formFlash;
@@ -50,10 +50,20 @@ class MeerkatController extends Controller
         'unApproveComments',
         'updateComment',
         'postCheckForSpam',
-        'postUpdatelicense',
         'getExport',
         'getCounts'
     ];
+
+    protected $secondaryProtected = [
+        '/',
+        'comments',
+        'api-comment-count',
+        'api-streams',
+        'api-stream-comments',
+        'api-comments'
+    ];
+
+    protected $accessManager = null;
 
     public function __construct(Manager $streamManager)
     {
@@ -61,6 +71,14 @@ class MeerkatController extends Controller
         $this->streamManager = $streamManager;
         $this->formFlash = new ContextualFlash('Form');
         $this->protectRoutes();
+        $permissions = $this->getConfig('permissions');
+
+        $accessManager = new AccessManager();
+        $accessManager->setUser(User::getCurrent());
+        $accessManager->setPermissions($this->getConfig('permissions'));
+        $accessManager->resolve();
+
+        $this->accessManager = $accessManager;
     }
 
     /**
@@ -70,24 +88,22 @@ class MeerkatController extends Controller
      */
     public function index()
     {
-        return $this->view('streams.index', [
-            'title' => meerkat_trans('comments.comments'),
-            'form' => MeerkatAPI::getForm(),
-            'filter' => Input::get('filter', 'all'),
-            'hideManagement' => false
-        ]);
-    }
-
-    public function postUpdatelicense()
-    {
-        $licenseKey = request('license_key', '');
-        $updater = app(LicenseUpdater::class);
-
-        if ($updater->updateLicense($licenseKey)) {
-            return redirect()->to(CP_ROUTE);
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
         }
 
-        return redirect()->to($this->actionUrl('updateLicense'));
+        return $this->view('streams.index', [
+            'title' => $this->meerkatTrans('comments.comments'),
+            'form' => MeerkatAPI::getForm(),
+            'filter' => Input::get('filter', 'all'),
+            'hideManagement' => false,
+            'cpPath' => $this->meerkatCpPath()
+        ]);
     }
 
     /**
@@ -98,6 +114,15 @@ class MeerkatController extends Controller
      */
     public function deleteComments(CommentManager $manager)
     {
+        if (!$this->accessManager->canRemoveComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $comments = Helper::ensureArray(Input::get('ids', []));
         $commentsRemoved = $manager->removeComments($comments);
 
@@ -115,6 +140,15 @@ class MeerkatController extends Controller
      */
     public function markCommentsAsSpam(CommentManager $manager)
     {
+        if (!$this->accessManager->canReportAsSpam()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $comments = Helper::ensureArray(Input::get('ids', []));
 
         $wasSaved = false;
@@ -160,6 +194,15 @@ class MeerkatController extends Controller
      */
     public function markCommentsAsNotSpam(CommentManager $manager)
     {
+        if (!$this->accessManager->canReportAsHam()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $comments = Helper::ensureArray(Input::get('ids', []));
 
         $wasSaved = false;
@@ -205,6 +248,15 @@ class MeerkatController extends Controller
      */
     public function approveComments(CommentManager $manager)
     {
+        if (!$this->accessManager->canApproveComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $comments = Helper::ensureArray(Input::get('ids', []));
 
         $approveErrorMessage = null;
@@ -233,6 +285,15 @@ class MeerkatController extends Controller
      */
     public function unApproveComments(CommentManager $manager)
     {
+        if (!$this->accessManager->canUnApproveComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $comments = Helper::ensureArray(Input::get('ids', []));
 
         $unapproveErrorMessage = null;
@@ -260,6 +321,15 @@ class MeerkatController extends Controller
      */
     public function updateComment(CommentManager $manager)
     {
+        if (!$this->accessManager->canEditComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         // A dirty little hack to ensure that we are only updating
         // one comment at a time. This way, we don't have to do
         // anymore changes on Meerkat's internal API to make
@@ -307,6 +377,15 @@ class MeerkatController extends Controller
 
     public function getComments($contextStream)
     {
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         /** @var Manager $manager */
         $manager = app(Manager::class);
         $stream = $manager->getStream($contextStream);
@@ -670,6 +749,15 @@ class MeerkatController extends Controller
 
     public function getCounts(Manager $manager)
     {
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $items = $manager->allComments(true);
 
         $counts = with(new CommentMetrics())->setComments($items)->toArray();

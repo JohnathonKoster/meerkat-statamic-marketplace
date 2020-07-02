@@ -1,0 +1,16 @@
+{
+  "name": "Meerkat",
+  "dependencies": [
+    {
+      "name": "Meerkat Core",
+      "source": "@local:meerkat.core",
+      "output": "./Core",
+      "map": [
+        {
+          "source": "\\Stillat\\Meerkat\\Core\\",
+          "target": "\\Statamic\\Addons\\Meerkat\\Core"
+        }
+      ]
+    }
+  ]
+}

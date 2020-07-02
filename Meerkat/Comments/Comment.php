@@ -2,20 +2,18 @@
 
 namespace Statamic\Addons\Meerkat\Comments;
 
-use Statamic\Addons\Meerkat\Markdown\Parser;
 use Statamic\API\File;
 use Statamic\API\User;
 use Statamic\API\YAML;
 use Illuminate\Support\Str;
 use Statamic\Extend\Extensible;
+use Statamic\Addons\Meerkat\MeerkatHelpers;
 use Statamic\Addons\Meerkat\Forms\Submission;
-use Statamic\Addons\Meerkat\Comments\CommentManager;
-use Statamic\Addons\Meerkat\Comments\CommentRemovalEventArgs;
 use Statamic\Addons\Meerkat\Comments\Traits\HasRecursiveCommentKey;
 
 class Comment extends Submission
 {
-    use HasRecursiveCommentKey, Extensible;
+    use HasRecursiveCommentKey, Extensible, MeerkatHelpers;
 
     /**
      * The parent Comment instance, if any.
@@ -327,7 +325,7 @@ class Comment extends Submission
      */
     public function delete()
     {
-        $commentsToDelete = collect(meerkat_get_comments_and_replies($this))->sortByDesc(function ($comment) {
+        $commentsToDelete = collect($this->getCommentsAndReplies($this))->sortByDesc(function ($comment) {
             return strlen($comment->getPath());  
         });
 

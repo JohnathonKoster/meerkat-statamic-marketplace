@@ -2,6 +2,7 @@
 
 namespace Statamic\Addons\Meerkat\Forms\Exporters;
 
+use Statamic\API\Config;
 use SplTempFileObject;
 use League\Csv\Writer;
 use Statamic\Forms\Exporters\AbstractExporter;
@@ -18,9 +19,6 @@ class CsvExporter extends AbstractExporter
 
     protected $formHeaders = [];
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->writer = Writer::createFromFileObject(new SplTempFileObject);
@@ -28,7 +26,7 @@ class CsvExporter extends AbstractExporter
 
     private function insertHeaders()
     {
-        $currentLocale = meerkat_get_config('cp.locale', 'en');
+        $currentLocale = Config::get('cp.locale', 'en');
         $headers = array_keys($this->form()->fields());
 
         $headers[] = 'date';

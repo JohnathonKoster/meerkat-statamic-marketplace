@@ -25,6 +25,15 @@ trait APIRoutes
      */
     public function getApiCommentCount(Stream $stream)
     {
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         return response()->json([
             'time' => time(),
             'count' => $stream->count()
@@ -39,6 +48,15 @@ trait APIRoutes
      */
     public function getApiStreams(Manager $manager)
     {
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $columns = [
             [
                 'label' => 'context',
@@ -79,6 +97,15 @@ trait APIRoutes
      */
     public function getApiStreamComments(Manager $manager)
     {
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $context = Input::get('context');
 
         $form = MeerkatAPI::getForm();
@@ -108,6 +135,15 @@ trait APIRoutes
      */
     private function getStats($items)
     {
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         return with(new CommentMetrics)->setComments($items)->toArray();
     }
 
@@ -149,6 +185,15 @@ trait APIRoutes
      */
     public function getApiComments(Manager $manager)
     {
+        if (!$this->accessManager->canViewComments()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $currentLocale = 'en';
 
         try {
@@ -164,12 +209,12 @@ trait APIRoutes
             [
                 'label' => 'name',
                 'field' => 'name',
-                'translation' => meerkat_trans('comments.table_author', [], 'messages', $currentLocale)
+                'translation' => $this->meerkatTrans('comments.table_author', [], 'messages', $currentLocale)
             ],
             [
                 'label' => 'comment',
                 'field' => 'comment',
-                'translation' => meerkat_trans('comments.table_comment', [], 'messages', $currentLocale)
+                'translation' => $this->meerkatTrans('comments.table_comment', [], 'messages', $currentLocale)
             ]
         ];
 
@@ -271,6 +316,15 @@ trait APIRoutes
      */
     public function postCheckForSpam(Manager $manager, Guard $guard)
     {
+        if (!$this->accessManager->canReportAsSpam()) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
         $items = $manager->allComments();
 
         $items->each(function(Comment $comment) use (&$guard) {

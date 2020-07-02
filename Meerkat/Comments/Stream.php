@@ -501,6 +501,12 @@ class Stream implements Countable
         $comments->map(function (Comment $comment) use (&$comments) {
             if ($comment->isReply()) {
                 $root = $comments->whereLoose('id', $comment->getParentID())->first();
+
+                // Can happen if copy/pasting data from one folder to the next, and the IDs do not align.
+                if ($root === null) {
+                    return null;
+                }
+
                 $comment->setParentComment($root);
             }
 
@@ -574,7 +580,9 @@ class Stream implements Countable
         $sortedComments->each(function (Comment $comment) {
             if (! $comment->isRoot()) {
                 $parent = $comment->getParent();
-                $comment->setParticipants($parent->getParticipants());
+                if ($parent !== null) {
+                    $comment->setParticipants($parent->getParticipants());
+                }
             }
         });
 

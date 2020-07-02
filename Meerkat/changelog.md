@@ -1,3 +1,15 @@
+1.5.8
+- Allows for greater control over user permissions in the Control Panel
+- Improves overall Meerkat security though improved access control
+- IMPROVE: Removes internal use of Meerkat helpers.php file in favor of instance methods:
+   - Reduces global function pollution
+   - Issue(s) where helpers would not load on some installations
+   - NOTE: The existing helper functions have not been removed for compatibility with existing integrations
+- Renames /Http/Composers/JavascriptComposer.php to /Http/Composers/JavaScriptComposer.php
+- Deprecates the use of Meerkat's Compass Server and Bag purchases
+- `license_key` removed from the default Meerkat settings.yaml
+- Replaced `{{ meerkat_trans() }}` in Blade resources with `{{ translate('addons.Meerkat::XXXXXXXX`) }}`
+
 1.5.74
 - Improves compatibility between Recaptcha addon and Meerkat Replies through `replies-to`
 

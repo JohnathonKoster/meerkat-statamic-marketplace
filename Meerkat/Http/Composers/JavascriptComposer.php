@@ -2,24 +2,31 @@
 
 namespace Statamic\Addons\Meerkat\Http\Composers;
 
-use Illuminate\Support\Str;
+use Statamic\API\User;
 use Statamic\Extend\Extensible;
 use Illuminate\Contracts\View\View;
+use Statamic\Addons\Meerkat\MeerkatHelpers;
 use Statamic\Addons\Meerkat\API\URL;
 use Statamic\Addons\Meerkat\MeerkatAPI;
 use Statamic\Addons\Meerkat\Extend\AvatarLoader;
 use Statamic\Addons\Meerkat\Translation\LangPatcher;
+use Statamic\Addons\Meerkat\Permissions\AccessManager;
 
 class JavaScriptComposer
 {
-    use Extensible;
+    use Extensible, MeerkatHelpers;
 
     const LIST_START = '{{-- start:list --}}';
     const LIST_END   = '{{-- end:list --}}';
 
-    public function __construct()
+    protected $accessManager = null;
+
+    private $hasResolvedAccessManager = false;
+
+    public function __construct(AccessManager $accessManager)
     {
         $this->addon_name = 'Meerkat';
+        $this->accessManager = $accessManager;
     }
 
     /**
@@ -34,6 +41,17 @@ class JavaScriptComposer
         ]);
     }
 
+    private function resolveAccessManager()
+    {
+        if ($this->hasResolvedAccessManager == false) {
+            $this->accessManager->setUser(User::getCurrent());
+            $this->accessManager->setPermissions($this->getConfig('permissions'));
+            $this->accessManager->resolve();
+
+            $this->hasResolvedAccessManager = true;
+        }
+    }
+
     private function getStreamTemplate() {
         $meerkatPath = addons_path('/Meerkat/resources/views/');
         view()->addNamespace('Meerkat', $meerkatPath);
@@ -43,28 +61,40 @@ class JavaScriptComposer
 
     public function compose(View $view)
     {
+        $this->resolveAccessManager();
+
+        if ($this->accessManager->canViewComments() == false) {
+            return;
+        }
+
+        if (!$this->isMeerkatRequest()) {
+            return;
+        }
+
         $scripts = '';
 
         if (isset($view['scripts'])) {
             $scripts = $view['scripts'];
         }
 
-        $scripts .= '<script>if (typeof Meerkat == "undefined") { Meerkat = {}; } ; Meerkat.countsUrl = "' . meerkat_cppath() . 'addons/meerkat/counts";</script>';
-        $scripts = $scripts.'<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/control-panel.js?v=' . MeerkatAPI::version())) . '"></script>';
+        $meerkatPermissionsSet = $this->accessManager->toPermissionSet();
+        $permissions = base64_encode(\json_encode($meerkatPermissionsSet->toArray()));
 
-        if (is_cp_dashboard()) {
+        $scripts .= '<script>if (typeof Meerkat == "undefined") { Meerkat = {}; } ; Meerkat.countsUrl = "' . $this->meerkatCpPath() . 'addons/meerkat/counts"; Meerkat.permissions = Object.freeze(JSON.parse(atob("'.$permissions.'")));</script>';
+        $scripts .= '<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/control-panel.js?v=' . MeerkatAPI::version())) . '"></script>';
+
+
+        $scripts .= '<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/meerkat.js?v=' . MeerkatAPI::version())) . '"></script>' . $scripts;
+        $scripts .= '<script>Meerkat.version = "' . MeerkatAPI::version() . '";</script>';
+
+        // Add the Meerkat configuration to the mix.
+        $scripts .= '<script>Meerkat.config = '.$this->getSettings().';</script>';
+
+        if ($this->isCpDashboard()) {
             $dashboardPatches = file_get_contents(realpath(__DIR__.'/../../resources/meerkatCommentStats.js'));
 
             $scripts .= '<script type="text/javascript">'.$dashboardPatches.'</script><script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/dashboard.js?v=' . MeerkatAPI::version())) . '"></script>' . $scripts;
-            
-            $view->with('scripts', $scripts);
-            return;
         }
-
-        if (!is_meerkat_request()) {
-            return;
-        }
-
 
         $langPatcher = new LangPatcher();
 
@@ -72,7 +102,6 @@ class JavaScriptComposer
 
         // Control Panel translation structure is:
         //     window.Statamic.translations.addons.Meerkat::<NAMESPACE>{obj:key>translation}
-        $scripts = '';
 
         if ($langPatches != null && is_array($langPatches) && count($langPatches) > 0) {
             $scripts .= '<script>';
@@ -91,11 +120,6 @@ class JavaScriptComposer
             $scripts .= '</script>';
         }
 
-        $scripts .= '<script src="' . URL::prependSiteRoot(URL::assemble(RESOURCES_ROUTE, 'addons', 'Meerkat', 'js/meerkat.js?v=' . MeerkatAPI::version())) . '"></script>' . $scripts;
-        $scripts .= '<script>Meerkat.version = "' . MeerkatAPI::version() . '";</script>';
-
-        // Add the Meerkat configuration to the mix.
-        $scripts .= '<script>Meerkat.config = '.$this->getSettings().';</script>';
 
         /** @var AvatarLoader $avatarLoader */
         $avatarLoader = app(AvatarLoader::class);
@@ -103,15 +127,11 @@ class JavaScriptComposer
         $avatarPartial = strip_tags($avatarPartial, '<div><img><span>');
         $scripts .= '<script>Meerkat.setAvatarTemplate("'.addslashes($avatarPartial).'");</script>';
 
-        if (is_meerkat_publisher_request()) {
+        if ($this->isMeerkatPublisherRequest()) {
             $scripts .= '<script>Meerkat.Publisher.publisherStream = '.$this->getStreamTemplate().';</script>';
         }
 
-
-        $scripts .= '';
-
         $view->with('scripts', $scripts);
-
     }
 
 }

@@ -73,6 +73,7 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
             },
             bulkAction: 'delete',
             applyingBulkActions: false,
+            mperm: window.Meerkat.permissions,
             avatarDriver: Meerkat.config.avatar_driver,
             passMobileOverride: false,
             loadStreamFor: null,
@@ -403,6 +404,7 @@ window.MeerkatStreamListing = MeerkatStreamListing = Vue.component('meerkat-stre
                     comment.is_markingnotspam = false;
                     comment.is_deleting = false;
                     comment.is_taking_action = false;
+                    comment.mperm = _vm.mperm;
 
                     comments.push(comment);
                 }

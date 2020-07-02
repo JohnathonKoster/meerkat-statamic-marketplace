@@ -5,14 +5,23 @@ namespace Statamic\Addons\Meerkat;
 use Statamic\API\Nav;
 use Statamic\API\Config;
 use Statamic\Extend\Listener;
+use Statamic\API\User;
+use Statamic\Extend\Extensible;
 use Statamic\Addons\Meerkat\Comments\Manager;
 use Statamic\Addons\Meerkat\Comments\Spam\Guard;
 use Statamic\Addons\Meerkat\Comments\Spam\Detectors\GTUBEDetector;
 use Statamic\Addons\Meerkat\Comments\Spam\Detectors\IPListDetector;
 use Statamic\Addons\Meerkat\Comments\Spam\Detectors\AkismetDetector;
+use Statamic\Addons\Meerkat\Permissions\AccessManager;
 
 class MeerkatListener extends Listener
 {
+    use MeerkatHelpers, Extensible;
+
+    protected $accessManager = null;
+
+    private $hasResolvedAccessManager = false;
+
     /**
      * The events to be listened for, and the methods to call.
      *
@@ -24,7 +33,24 @@ class MeerkatListener extends Listener
         'Meerkat.registeringAvatarDrivers' => 'registerDefaultDrivers',
         'Meerkat.comment.creating' => 'commentCreated',
         'Meerkat.guard.starting' => 'loadSpamDetectors',
+
+        // 'Meerkat.permissions.resolving' => 'resolvingMeerkatPermissions',
     ];
+
+    public function __construct(AccessManager $accessManager)
+    {
+        parent::__construct();
+        $this->addon_name = 'Meerkat';
+
+        $this->accessManager = $accessManager;
+    }
+
+    public function resolvingMeerkatPermissions($user, $permissionSet)
+    {
+        $permissionSet->canViewComments = true;
+
+        return $permissionSet;
+    }
 
     public function loadSpamDetectors(Guard $guard)
     {
@@ -79,8 +105,24 @@ class MeerkatListener extends Listener
         return $drivers;
     }
 
+    private function resolveAccessManager()
+    {
+        if ($this->hasResolvedAccessManager == false) {
+            $this->accessManager->setUser(User::getCurrent());
+            $this->accessManager->setPermissions($this->getConfig('permissions'));
+            $this->accessManager->resolve();
+
+            $this->hasResolvedAccessManager = true;
+        }
+    }
+
     public function addNavItems($nav)
     {
+        $this->resolveAccessManager();
+
+        if ($this->accessManager->canViewComments() == false) {
+            return;
+        }
 
         $suffix = '';
         $pendingCount = 0;
@@ -98,7 +140,7 @@ class MeerkatListener extends Listener
 
 
         if (version_compare(STATAMIC_VERSION, '2.1.0') >= 0) {
-            $comments = Nav::item(meerkat_trans('comments.comments'))->url('/' . CP_ROUTE . '/addons/meerkat?source=cp-nav')->icon('chat');
+            $comments = Nav::item($this->meerkatTrans('comments.comments'))->url('/' . CP_ROUTE . '/addons/meerkat?source=cp-nav')->icon('chat');
 
             $badgeMethodExists = method_exists($comments, 'badge');
 
@@ -106,7 +148,7 @@ class MeerkatListener extends Listener
                 $comments->badge($pendingCount);
             }
         } else {
-            $comments = Nav::item(meerkat_trans('comments.comments') . $suffix)->url('/' . CP_ROUTE . '/addons/meerkat?source=cp-nav')->icon('chat');
+            $comments = Nav::item($this->meerkatTrans('comments.comments') . $suffix)->url('/' . CP_ROUTE . '/addons/meerkat?source=cp-nav')->icon('chat');
         }
 
         $nav->addTo('content', $comments);
@@ -114,7 +156,13 @@ class MeerkatListener extends Listener
 
     public function addMeerkatCss()
     {
-        if (is_meerkat_request()) {
+        $this->resolveAccessManager();
+
+        if ($this->accessManager->canViewComments() == false) {
+            return;
+        }
+
+        if ($this->isMeerkatRequest()) {
             return '<link href="'.\cp_resource_url('../addons/Meerkat/css/meerkat.css').'?v=' . MeerkatAPI::version() . '" rel="stylesheet" />';
         }
     }

@@ -42,7 +42,6 @@ Meerkat.Publisher = {
     },
 
     setup: function () {
-        console.log('inside publish setup');
         var publishWrap = null;
 
         if ($('#publish-fields').length) {
