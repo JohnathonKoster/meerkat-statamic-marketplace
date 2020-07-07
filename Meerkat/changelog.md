@@ -1,3 +1,6 @@
+1.5.81
+- Improves compatibility with latest Statamic versions
+
 1.5.8
 - Allows for greater control over user permissions in the Control Panel. See https://stillat.com/meerkat/docs/permissions for more details.
 - Improves overall Meerkat security though improved access control
