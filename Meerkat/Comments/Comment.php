@@ -619,6 +619,28 @@ class Comment extends Submission
         
         $data['is_deleted'] = $this->original('is_deleted', false);
 
+        if (array_key_exists('authenticated_user', $this->sourceData)) {
+            $data['authenticated_user'] = $this->sourceData['authenticated_user'];
+
+            $user =  User::getCurrent();
+
+            if ($user != null) {
+                $userId = $user->id();
+
+                if ($userId == $data['authenticated_user']) {
+                    $data['authenticated_user_owns_comment'] = true;
+                    $data['comment_markdown'] = $this->sourceData['comment_markdown'];
+                } else {
+                    $data['authenticated_user_owns_comment'] = false;
+                }
+            } else {
+                $data['authenticated_user_owns_comment'] = false;
+            }
+        } else {
+            $data['authenticated_user'] = null;
+            $data['authenticated_user_owns_comment'] = false;
+        }
+
         return $data;
     }
 

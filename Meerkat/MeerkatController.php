@@ -313,15 +313,51 @@ class MeerkatController extends Controller
         ];
     }
 
+    public function postUpdate(CommentManager $manager)
+    {
+        $currentStatamicUser = User::getCurrent();
+
+        if ($currentStatamicUser == null) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
+        // Do some checks to make sure the comment
+        // is owned by the current Statamic user.
+        $comments = array_slice(Helper::ensureArray(Input::get('ids'), []), 0, 1);
+
+        if (count($comments) > 0) {
+            $comment = $comments[0];
+
+            $commentToUpdate = $manager->findOrFail($comment);
+            $authorizedUserId = $commentToUpdate->get('authenticated_user');
+
+            if ($authorizedUserId != $currentStatamicUser->id()) {
+                if (request()->ajax()) {
+                    return response('Unauthorized.', 401);
+                } else {
+                    abort(403);
+                    return;
+                }
+            }
+        }
+
+        return $this->updateComment($manager);
+    }
+
     /**
      * Updates the specified comments.
      *
      * @param  CommentManager $manager
      * @return array
      */
-    public function updateComment(CommentManager $manager)
+    public function updateComment(CommentManager $manager, $allowOverride = false)
     {
-        if (!$this->accessManager->canEditComments()) {
+        if ($allowOverride == false && !$this->accessManager->canEditComments()) {
             if (request()->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
@@ -371,6 +407,7 @@ class MeerkatController extends Controller
             'success' => $success,
             'updated' => $comments[0],
             'parsedContent' => Parser::parseCommentContent($newComment),
+            'originalMarkdown' => $newComment,
             'errorMessage' => $errorMessage
         ];
     }

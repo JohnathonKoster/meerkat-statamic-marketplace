@@ -1,3 +1,6 @@
+1.5.82
+- Adds new helper data attributes for working with inline editing. See https://github.com/Stillat/meerkat-examples for an example of working with inline editing in your site's theme.
+
 1.5.81
 - Improves compatibility with latest Statamic versions
 
