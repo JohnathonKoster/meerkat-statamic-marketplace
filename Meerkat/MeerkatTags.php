@@ -6,6 +6,7 @@ use Statamic\API\Arr;
 use Statamic\API\Form;
 use Statamic\API\Parse;
 use Statamic\API\Crypt;
+use Statamic\API\User;
 use Statamic\Data\DataCollection;
 use Statamic\Addons\Meerkat\UI\Gravatar;
 use Statamic\Addons\Meerkat\Comments\Stream;
@@ -146,6 +147,63 @@ class MeerkatTags extends CollectionTags
         return $this->getConfigBool('designer_mode', false);
     }
 
+    public function allComments()
+    {
+        $userId = $this->get('user', "*current*");
+        $context = $this->get('context', '*all*');
+
+        if ($userId == '*current*') {
+            $currentUser = User::getCurrent();
+
+            if ($currentUser === null) {
+                $this->collection = new CommentCollection();
+
+                if ($this->collection->isEmpty()) {
+                    return $this->parseNoResults();
+                }
+
+                return $this->output();
+            } else {
+                $userId = $currentUser->id();
+            }
+        }
+
+        $tempComments = app(Manager::class)->allComments(true);
+        $filteredComments = [];
+
+        foreach ($tempComments as $comment) {
+            if ($userId !== null) {
+                $commentUser = $comment->user();
+
+                if ($commentUser !== null && $commentUser->id() == $userId) {
+                    $filteredComments[] = $comment;
+                }
+            }
+
+            if ($context === null || $context !== '*all*') {
+                $postContext = $comment->get('context');
+
+                if ($postContext !== null) {
+                    $contextId = $postContext->id();
+
+                    if ($contextId !== null && $contextId === $context) {
+                        $filteredComments[] = $comment;
+                    }
+                }
+            }
+        }
+
+        $this->collection = new CommentCollection($filteredComments);
+
+        $this->filterResponses();
+
+        if ($this->collection->isEmpty()) {
+            return $this->parseNoResults();
+        }
+
+        return $this->output();
+    }
+
     public function responses()
     {
         $withTrashed = $this->getBool('show_hidden');
@@ -166,7 +224,6 @@ class MeerkatTags extends CollectionTags
         } else {
             $this->collection = $stream->getDesignerModeComments();
         }
-
 
         $this->filterResponses();
 

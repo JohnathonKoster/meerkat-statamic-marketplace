@@ -641,6 +641,22 @@ class Comment extends Submission
             $data['authenticated_user_owns_comment'] = false;
         }
 
+        $commentContext = $this->get('context');
+
+        if ($commentContext !== null) {
+            $contextArray = $commentContext->toArray();
+            if (array_key_exists('content', $contextArray)) {
+                unset($contextArray['content']);
+            }
+            if (array_key_exists('content_raw', $contextArray)) {
+                unset($contextArray['content_raw']);
+            }
+
+            $data['comment_context'] = $contextArray;
+        } else {
+            $data['comment_context'] = [];
+        }
+
         return $data;
     }
 

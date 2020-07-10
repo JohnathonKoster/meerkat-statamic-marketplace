@@ -313,6 +313,55 @@ class MeerkatController extends Controller
         ];
     }
 
+    public function postDelete(CommentManager $manager)
+    {
+        $currentStatamicUser = User::getCurrent();
+
+        if ($currentStatamicUser == null) {
+            if (request()->ajax()) {
+                return response('Unauthorized.', 401);
+            } else {
+                abort(403);
+                return;
+            }
+        }
+
+        $comments = Helper::ensureArray(Input::get('ids', []));
+
+        if (count($comments) > 0) {
+            $comments = [
+                $comments[0]
+            ];
+        }
+
+        if (count($comments) == 1) {
+            $commentToRemove = $manager->findOrFail($comments[0]);
+
+            $authorizedUserId = $commentToRemove->get('authenticated_user');
+
+            if ($authorizedUserId != $currentStatamicUser->id()) {
+                if (request()->ajax()) {
+                    return response('Unauthorized.', 401);
+                } else {
+                    abort(403);
+                    return;
+                }
+            }
+
+            $commentsRemoved = $manager->removeComments($comments);
+
+            return [
+              'success' => true,
+              'removed' => []
+            ];
+        }
+
+        return [
+            'success' => false,
+            'removed' => []
+        ];
+    }
+
     public function postUpdate(CommentManager $manager)
     {
         $currentStatamicUser = User::getCurrent();
@@ -346,7 +395,7 @@ class MeerkatController extends Controller
             }
         }
 
-        return $this->updateComment($manager);
+        return $this->updateComment($manager, true);
     }
 
     /**
