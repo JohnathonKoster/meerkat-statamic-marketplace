@@ -149,6 +149,8 @@ class MeerkatTags extends CollectionTags
 
     public function allComments()
     {
+        $this->collection = new CommentCollection();
+
         $userId = $this->get('user', "*current*");
         $context = $this->get('context', '*all*');
 
@@ -168,24 +170,40 @@ class MeerkatTags extends CollectionTags
             }
         }
 
+        if ($context === '*all*') {
+            $context = null;
+        }
+
         $tempComments = app(Manager::class)->allComments(true);
         $filteredComments = [];
 
         foreach ($tempComments as $comment) {
+            $postContext = $comment->get('context');
+
             if ($userId !== null) {
                 $commentUser = $comment->user();
 
                 if ($commentUser !== null && $commentUser->id() == $userId) {
-                    $filteredComments[] = $comment;
+                    if ($context !== null) {
+                        if ($postContext == null) {
+                            continue;
+                        } else {
+                            if ($postContext->id() !== $context) {
+                                continue;
+                            } else {
+                                $filteredComments[] = $comment;
+                            }
+                        }
+                    } else {
+                        $filteredComments[] = $comment;
+                        continue;
+                    }
                 }
             }
 
-            if ($context === null || $context !== '*all*') {
-                $postContext = $comment->get('context');
-
+            if ($context === null) {
                 if ($postContext !== null) {
                     $contextId = $postContext->id();
-
                     if ($contextId !== null && $contextId === $context) {
                         $filteredComments[] = $comment;
                     }

@@ -1,3 +1,6 @@
+1.5.84
+- Fixes an issue when resolving comments with `all-comments` when more than one filter are applied
+
 1.5.82
 - Adds new helper data attributes for working with inline editing. See https://github.com/Stillat/meerkat-examples for an example of working with inline editing in your site's theme.
 
