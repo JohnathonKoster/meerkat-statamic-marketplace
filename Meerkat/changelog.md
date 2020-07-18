@@ -1,3 +1,6 @@
+1.5.85
+- Dramatically expands the thread filtering features. Learn more in the [Filtering Comment Threads](https://stillat.com/meerkat/docs/filtering-threads) guide.
+
 1.5.84
 - Fixes an issue when resolving comments with `all-comments` when more than one filter are applied
 

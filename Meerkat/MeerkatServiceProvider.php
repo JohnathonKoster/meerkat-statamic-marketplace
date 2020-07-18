@@ -2,6 +2,7 @@
 
 namespace Statamic\Addons\Meerkat;
 
+use Statamic\Addons\Meerkat\Extend\ThemeFilters;
 use Statamic\API\User;
 use Statamic\Addons\Meerkat\Permissions\AccessManager;
 use Statamic\Extend\Extensible;
@@ -41,6 +42,7 @@ class MeerkatServiceProvider extends ServiceProvider
         $this->registerViewComposers();
         $this->loadAvatarDrivers();
         $this->registerSpamGuard();
+        $this->collectAddonThemeFilters();
     }
 
     protected function registerDependencies()
@@ -64,6 +66,8 @@ class MeerkatServiceProvider extends ServiceProvider
         $this->app->singleton(Manager::class, Manager::class);
         $this->app->singleton(AvatarLoader::class, AvatarLoader::class);
         $this->app->singleton(Guard::class, Guard::class);
+        $this->app->singleton(ThemeFilters::class, ThemeFilters::class);
+        $this->app->make(ThemeFilters::class)->registerDefaultFilters();
 
         $submitResults = $this->getConfigBool('guard_submit_results', false);
         $this->app->make(Guard::class)->doSubmitResults($submitResults);
@@ -75,6 +79,11 @@ class MeerkatServiceProvider extends ServiceProvider
     protected function registerSpamGuard()
     {
         $this->emitEvent('guard.starting', app(Guard::class));
+    }
+
+    protected function collectAddonThemeFilters()
+    {
+        $this->emitEvent('theme.filters', app(ThemeFilters::class));
     }
 
     /**

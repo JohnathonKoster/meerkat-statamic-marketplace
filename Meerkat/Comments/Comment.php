@@ -657,6 +657,8 @@ class Comment extends Submission
             $data['comment_context'] = [];
         }
 
+        $data['_meerkat_internal_path'] = $this->sourceData['internal_path'];
+
         return $data;
     }
 
