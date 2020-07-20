@@ -1,3 +1,7 @@
+1.5.86
+- Fixes a bug that incorrectly checks for a reply comment ID.
+- Fixes a bug that would throw a fatal exception if validation keys were not matched with messages.
+
 1.5.85
 - Dramatically expands the thread filtering features. Learn more in the [Filtering Comment Threads](https://stillat.com/meerkat/docs/filtering-threads) guide.
 

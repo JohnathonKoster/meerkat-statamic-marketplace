@@ -575,14 +575,18 @@ class MeerkatController extends Controller
 
         $context = '';
 
-        if (isset($fields['ids'])) {
+        if (isset($fields['ids']) && !empty($fields['ids'])) {
             if (is_array($fields['ids']) && count($fields['ids']) > 0) {
                 $replyingTo = $fields['ids'][0];
             } else {
                 $replyingTo = $fields['ids'];
             }
 
-            $isReply = true;
+            if (mb_strlen(trim($replyingTo)) == 0) {
+                $isReply = false;
+            } else {
+                $isReply = true;
+            }
         }
 
         if (isset($fields['ids'])) {
@@ -682,7 +686,6 @@ class MeerkatController extends Controller
                 }
             }
 
-            $errors['creating'][] = $exceptionMessage;
         }
 
         $authUserByPassCaptcha = $this->getConfig('captcha_auth_bypass', true);
