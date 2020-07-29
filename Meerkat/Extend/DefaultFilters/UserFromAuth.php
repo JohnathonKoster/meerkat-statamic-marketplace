@@ -29,6 +29,10 @@ class UserFromAuth
             return $comments->reject(function ($comment) use ($includeUsers) {
                 $commentHasUser = array_key_exists('authenticated_user', $comment);
 
+                if (array_key_exists('authenticated_user', $comment) && $comment['authenticated_user'] === null) {
+                    $commentHasUser = false;
+                }
+
                 if ($includeUsers) {
                     if ($commentHasUser) {
                         return false;

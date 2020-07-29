@@ -87,7 +87,9 @@ trait CollectionTagHelpers
         // Keep track of how many items were in the collection before pagination chunks it up.
         $this->total_results = $this->collection->count();
 
-        $page = (int) Request::get('page', 1);
+        $pageby = $this->getParam('pageby', 'page');
+
+        $page = (int) Request::get($pageby, 1);
 
         $this->offset = (($page - 1) * $this->limit) + $this->getInt('offset', 0);
 
@@ -108,6 +110,7 @@ trait CollectionTagHelpers
         }
 
         $paginator = new LengthAwarePaginator($items, $count, $this->limit, $page);
+        $paginator->setPageName($pageby);
 
         $paginator->setPath(URL::getCurrent());
         $paginator->appends(Request::all());

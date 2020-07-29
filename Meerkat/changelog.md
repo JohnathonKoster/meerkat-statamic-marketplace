@@ -1,3 +1,8 @@
+1.5.87
+- Removes default filters from `all-comments` to improve compatibility with the filter syntax
+- Disables default filters on `responses` when filters are present
+- Adds an additional check to the user:from_auth check to handle cases where user ID is present, but set to null.
+
 1.5.86
 - Fixes a bug that incorrectly checks for a reply comment ID.
 - Fixes a bug that would throw a fatal exception if validation keys were not matched with messages.

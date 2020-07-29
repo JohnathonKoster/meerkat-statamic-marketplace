@@ -249,32 +249,33 @@ class MeerkatTags extends CollectionTags
     public function allComments()
     {
         $this->collection = new CommentCollection();
+        $tempComments = app(Manager::class)->allComments(true);
 
-        $userId = $this->get('user', "*current*");
-        $context = $this->get('context', '*all*');
+        /*
+                $userId = $this->get('user', "*current*");
+                $context = $this->get('context', '*all*');
 
-        if ($userId == '*current*') {
-            $currentUser = User::getCurrent();
+                if ($userId == '*current*') {
+                    $currentUser = User::getCurrent();
 
-            if ($currentUser === null) {
-                $this->collection = new CommentCollection();
+                    if ($currentUser === null) {
+                        $this->collection = new CommentCollection();
 
-                if ($this->collection->isEmpty()) {
-                    return $this->parseNoResults();
+                        if ($this->collection->isEmpty()) {
+                            return $this->parseNoResults();
+                        }
+
+                        return $this->output();
+                    } else {
+                        $userId = $currentUser->id();
+                    }
                 }
 
-                return $this->output();
-            } else {
-                $userId = $currentUser->id();
-            }
-        }
+                if ($context === '*all*') {
+                    $context = null;
+                }*/
 
-        if ($context === '*all*') {
-            $context = null;
-        }
-
-        $tempComments = app(Manager::class)->allComments(true);
-        $filteredComments = [];
+        /*$filteredComments = [];
 
         foreach ($tempComments as $comment) {
             $postContext = $comment->get('context');
@@ -308,11 +309,12 @@ class MeerkatTags extends CollectionTags
                     }
                 }
             }
+        }*/
+        $this->collection = new CommentCollection($tempComments);
+
+        if (!$this->collection->isEmpty()) {
+            $this->sort();
         }
-
-        $this->collection = new CommentCollection($filteredComments);
-
-        $this->filterResponses();
 
         $dynamicFilters = $this->getParam('filter', null);
 
@@ -321,11 +323,77 @@ class MeerkatTags extends CollectionTags
             $this->processThemeFilters(collect($this->parameters), $dynamicFilters, $this->context, 'meerkat:all-comments');
         }
 
+        $this->limit();
+
         if ($this->collection->isEmpty()) {
             return $this->parseNoResults();
         }
 
         return $this->output();
+    }
+
+    /**
+     * Processes all theme filters for the current context.
+     *
+     * @param Collection $params The template parameters, if available.
+     * @param string $filters The Meerkat filters.
+     * @param null $context The Meerkat context, if any.
+     * @param string $tagContext The filter tag context.
+     * @throws \Exception
+     */
+    private function processThemeFilters($params, $filters, $context = null, $tagContext = '')
+    {
+        $isDebugEnabled = Config::get('debug.debug', false);
+
+        // Remap filters.
+        $filters = $this->meerkatThemeFilters->getFilterMap($filters);
+        $statamicUser = User::getCurrent();
+
+        $this->meerkatThemeFilters->setUser($statamicUser);
+
+        // Create a temporary collection, containing all the theme properties of the comments.
+        $themeFilterComments = $this->collection->toArray(true);
+
+        $filters = explode('|', $filters);
+        $idsToKeep = [];
+
+        foreach ($filters as $filter) {
+            if ($this->meerkatThemeFilters->hasFilter(trim($filter))) {
+                try {
+                    $filterResults = $this->meerkatThemeFilters->runFilter($filter, new Collection($themeFilterComments), $params, $context, $tagContext);
+
+                    if ($filterResults !== null && $filterResults instanceof Collection) {
+                        //$this->collection = $filterResults;
+                        $idsToKeep = $filterResults->pluck('id')->toArray();
+
+                        if (count($idsToKeep) == 0) {
+                            break;
+                        } else {
+                            $themeCollection = new Collection($themeFilterComments);
+
+                            // Create a new collection for the next comment filter.
+                            $themeFilterComments = $themeCollection->reject(function ($comment) use ($idsToKeep) {
+                                $thisId = $comment['id'];
+
+                                return in_array($thisId, $idsToKeep) == false;
+                            })->toArray();
+                        }
+                    }
+                } catch (\Exception $e) {
+                    if ($isDebugEnabled) {
+                        throw $e;
+                    }
+                }
+            } else {
+                throw new FilterException($filter . ' Meerkat filter could not be found.');
+            }
+        }
+
+        // Re-create the main collection (effectively throwing away any
+        //modifications a filter might have tried). Keep this clean.
+        $this->collection = $this->collection->filter(function ($comment) use ($idsToKeep) {
+            return in_array($comment->id(), $idsToKeep);
+        });
     }
 
     protected function output()
@@ -485,8 +553,6 @@ class MeerkatTags extends CollectionTags
             $this->collection = $stream->getDesignerModeComments();
         }
 
-        $this->filterResponses();
-
         $dynamicFilters = $this->getParam('filter', null);
 
         if ($dynamicFilters !== null) {
@@ -498,71 +564,20 @@ class MeerkatTags extends CollectionTags
             return $this->parseNoResults();
         }
 
-        return $this->output();
-    }
-
-    /**
-     * Processes all theme filters for the current context.
-     *
-     * @param Collection $params The template parameters, if available.
-     * @param string $filters The Meerkat filters.
-     * @param null $context The Meerkat context, if any.
-     * @param string $tagContext The filter tag context.
-     * @throws \Exception
-     */
-    private function processThemeFilters($params, $filters, $context = null, $tagContext = '')
-    {
-        $isDebugEnabled = Config::get('debug.debug', false);
-
-        // Remap filters.
-        $filters = $this->meerkatThemeFilters->getFilterMap($filters);
-        $statamicUser = User::getCurrent();
-
-        $this->meerkatThemeFilters->setUser($statamicUser);
-
-        // Create a temporary collection, containing all the theme properties of the comments.
-        $themeFilterComments = $this->collection->toArray(true);
-
-        $filters = explode('|', $filters);
-        $idsToKeep = [];
-
-        foreach ($filters as $filter) {
-            if ($this->meerkatThemeFilters->hasFilter(trim($filter))) {
-                try {
-                    $filterResults = $this->meerkatThemeFilters->runFilter($filter, new Collection($themeFilterComments), $params, $context, $tagContext);
-
-                    if ($filterResults !== null && $filterResults instanceof  Collection) {
-                        //$this->collection = $filterResults;
-                        $idsToKeep = $filterResults->pluck('id')->toArray();
-
-                        if (count($idsToKeep) == 0) {
-                            break;
-                        } else {
-                            $themeCollection = new Collection($themeFilterComments);
-
-                            // Create a new collection for the next comment filter.
-                            $themeFilterComments = $themeCollection->reject(function ($comment) use ($idsToKeep) {
-                                $thisId = $comment['id'];
-
-                                return in_array($thisId, $idsToKeep) == false;
-                            })->toArray();
-                        }
-                    }
-                } catch (\Exception $e) {
-                    if ($isDebugEnabled) {
-                        throw $e;
-                    }
-                }
-            } else {
-                throw new FilterException($filter.' Meerkat filter could not be found.');
-            }
+        if ($dynamicFilters === null || mb_strlen(trim($dynamicFilters)) == 0) {
+            $this->filterReplies();
+            $this->filterUnpublished();
+            $this->filterSince();
+            $this->filterUntil();
         }
 
-        // Re-create the main collection (effectively throwing away any
-        //modifications a filter might have tried). Keep this clean.
-        $this->collection = $this->collection->filter(function ($comment) use ($idsToKeep) {
-            return in_array($comment->id(), $idsToKeep);
-        });
+        if (!$this->collection->isEmpty()) {
+            $this->sort();
+        }
+
+        $this->limit();
+
+        return $this->output();
     }
 
     public function cpLink()
