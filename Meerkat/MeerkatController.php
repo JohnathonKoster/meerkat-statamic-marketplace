@@ -639,8 +639,16 @@ class MeerkatController extends Controller
             $fields['email'] = auth()->user()->get('email');
         }
 
+        $commentsEnabled = true;
+
+        $entryDate = $entry->date();
+
+        if ($entryDate !== null) {
+            $commentsEnabled = $this->streamManager->areCommentsEnabled($entryDate);
+        }
+
         if (!$this->isAuthenticatedUser($fields['email']) &&
-            !$this->streamManager->areCommentsEnabled($entry->date())) {
+            !$commentsEnabled) {
             $errors['*'] = $this->trans('comments.disabled');
             return $this->formFailure($params, $errors, MeerkatTags::MEERKAT_FORMSET);
         }
